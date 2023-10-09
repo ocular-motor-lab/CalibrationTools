@@ -1,4 +1,4 @@
-function camEyeDispDots = CamLocDataCorrection(inputDot, primaryPosition, camPosition, eyeRadius)
+function camEyeDispDots = Display2Cam_simulation(inputDot, primaryPosition, camPosition, eyeRadius)
 
 % create vectors from eye to the dot with eye radius length
 normDispDots = inputDot ./ sqrt(sum(inputDot.^2,2));

@@ -36,28 +36,32 @@ camZ = -20;
 camPosition = [camX,camY,camZ];
 
 primaryPosition = [distanceDispEye,0,0];
-camEyeDispDots = CamLocDataCorrection(dispDots_c, primaryPosition, camPosition, eyeRadius);
+camEyeDispDots = Display2Cam_simulation(dispDots_c, primaryPosition, camPosition, eyeRadius);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % figures
 figure
-subplot(2,1,1)
+subplot(1,2,1)
 plot(dispDots_c(:,2),dispDots_c(:,3),'.','MarkerSize',2)
 xlabel('Horizontal (cm)')
 ylabel('Vertical (cm)')
 title('Displayed Dots Position')
+axis equal
 ylim([-82,82])
 xlim([-82,82])
 
-subplot(2,1,2)
+
+subplot(1,2,2)
 plot(camEyeDispDots(:,2),camEyeDispDots(:,3),'.','MarkerSize',2)
 xlabel('Horizontal (cm)')
 ylabel('Vertical (cm)')
 title('Eye Positions Looking at Displayed Dots')
 subtitle('Camera on the table below the eye level')
+axis equal
 ylim([-1,1])
 xlim([-1,1])
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -90,7 +94,7 @@ for i = 1:size(dots,1)
         
     end
 
-    for h = 1:15
+    for h = 1:30
         c = c + 1;
         crosses(c,:) = [dots(i,1)+h/10 dots(i,2)];
         
