@@ -27,23 +27,22 @@ dispDots(:,2:3) = dots;
 
 % create vectors from eye to the dot with eye radius length
 eyeRadius = 1.3; %cm, arbitrary number
-normDispDots = dispDots_c ./ sqrt(sum(dispDots_c.^2,2));
-eyeDispDots = normDispDots * eyeRadius;
 
 % assuming the camera is outside of the display plane
 % camera location relative to eye - cm
 camX = 45;
 camY = 0;
 camZ = -20;
-camLocation = [camX,camY,camZ];
+camPosition = [camX,camY,camZ];
 
-% quaternion between x axis from the eye toward display and new x' toward camera
-q = CalculateQuaternion([distanceDispEye,0,0], camLocation);
-camEyeDispDots = rotateframe(q,eyeDispDots);
+primaryPosition = [distanceDispEye,0,0];
+camEyeDispDots = CamLocDataCorrection(dispDots_c, primaryPosition, camPosition, eyeRadius);
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % figures
 figure
-subplot(2,2,1)
+subplot(2,1,1)
 plot(dispDots_c(:,2),dispDots_c(:,3),'.','MarkerSize',2)
 xlabel('Horizontal (cm)')
 ylabel('Vertical (cm)')
@@ -51,19 +50,11 @@ title('Displayed Dots Position')
 ylim([-82,82])
 xlim([-82,82])
 
-subplot(2,2,3)
-plot(eyeDispDots(:,2),eyeDispDots(:,3),'.','MarkerSize',2)
-xlabel('Horizontal (cm)')
-ylabel('Vertical (cm)')
-title('Eye Positions Looking at Displayed Dots'),subtitle('Camera at the eye level')
-ylim([-1,1])
-xlim([-1,1])
-
-subplot(2,2,4)
+subplot(2,1,2)
 plot(camEyeDispDots(:,2),camEyeDispDots(:,3),'.','MarkerSize',2)
 xlabel('Horizontal (cm)')
 ylabel('Vertical (cm)')
-%title('Eye Positions Looking at Displayed Dots'),
+title('Eye Positions Looking at Displayed Dots')
 subtitle('Camera on the table below the eye level')
 ylim([-1,1])
 xlim([-1,1])
@@ -109,32 +100,5 @@ for i = 1:size(dots,1)
 
 
 end
-
-end
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-function q = CalculateQuaternion(a, b)
-% generate the quaternion for rotation from 3d vector "a" to "b"
-% make unit vectors
-a1 = a./sqrt(sum(a.^2));
-b1 = b./sqrt(sum(b.^2));
-
-% calculate the angle between a and b
-alpha = acos( dot(a1,b1) );
-
-% calculate the rotation axis which is perpendicular to the plane of two
-% vectors
-w = cross(a1,b1);
-w1 = w./sqrt(sum(w.^2));
-
-%generate the quaternion
-q1 = cos(alpha/2);
-q2 = w1(1) * sin(alpha/2);
-q3 = w1(2) * sin(alpha/2);
-q4 = w1(3) * sin(alpha/2);
-
-q = quaternion(q1,q2,q3,q4);
 
 end
