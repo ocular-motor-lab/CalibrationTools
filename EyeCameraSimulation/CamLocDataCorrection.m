@@ -1,20 +1,17 @@
-function  = CamLocDataCorrection(inputDot, camPosition, eyeRadius)
+function camEyeDispDots = CamLocDataCorrection(inputDot, primaryPosition, camPosition, eyeRadius)
+
 % create vectors from eye to the dot with eye radius length
-eyeRadius = 1.3; %cm, arbitrary number
-normDispDots = dispDots_c ./ sqrt(sum(dispDots_c.^2,2));
+normDispDots = inputDot ./ sqrt(sum(inputDot.^2,2));
 eyeDispDots = normDispDots * eyeRadius;
 
 % assuming the camera is outside of the display plane
 % camera location relative to eye - cm
-camX = 45;
-camY = 0;
-camZ = -20;
-camLocation = [camX,camY,camZ];
+% example: camX = 45; camY = 0; camZ = -20; camPosition = [camX,camY,camZ];
 
-% quaternion between x axis from the eye toward display and new x' toward camera
-q = CalculateQuaternion([distanceDispEye,0,0], camLocation);
+% quaternion between x axis from the eye toward display (primary position; for example: [distanceDispEye,0,0])
+% and new x' toward camera (reference position)
+q = CalculateQuaternion(primaryPosition, camPosition);
 camEyeDispDots = rotateframe(q,eyeDispDots);
-
 
 end
 
