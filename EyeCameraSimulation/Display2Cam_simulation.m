@@ -15,7 +15,7 @@ camEyeDispDots = rotateframe(q,eyeDispDots);
 
 end
 
-
+%% local function(s)
 function q = CalculateQuaternion(a, b)
 % generate the quaternion for rotation from 3d vector "a" to "b"
 % make unit vectors
