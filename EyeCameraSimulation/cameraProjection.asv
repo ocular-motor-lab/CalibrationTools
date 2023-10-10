@@ -63,26 +63,27 @@ xlim([-1,1])
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-eyeDispDots = Cam2Display_simulation(camEyeDispDots(:,2:3), primaryPosition, camPosition, eyeRadius );
+eyeDispDots = Cam2Display_simulation(camEyeDispDots(:,2:3), primaryPosition, eyeRadius );
+camEyeDispDots = Display2Cam_simulation(dispDots_c, primaryPosition, camPosition, eyeRadius);
 
 % figures
 figure
-
 subplot(1,2,1)
+plot(dispDots_c(:,2),dispDots_c(:,3),'.','MarkerSize',2)
+xlabel('Horizontal (cm)')
+ylabel('Vertical (cm)')
+title('Displayed Dots Position')
+axis equal
+ylim([-82,82])
+xlim([-82,82])
+
+
+subplot(1,2,2)
 plot(camEyeDispDots(:,2),camEyeDispDots(:,3),'.','MarkerSize',2)
 xlabel('Horizontal (cm)')
 ylabel('Vertical (cm)')
-sgtitle('Eye Positions Looking at Displayed Dots')
+title('Eye Positions Looking at Displayed Dots')
 subtitle('Camera on the table below the eye level')
-axis equal
-ylim([-1,1])
-xlim([-1,1])
-
-subplot(1,2,2)
-plot(eyeDispDots(:,2),eyeDispDots(:,3),'.','MarkerSize',2)
-xlabel('Horizontal (cm)')
-ylabel('Vertical (cm)')
-subtitle('Camera infront of the eye while at the primary position')
 axis equal
 ylim([-1,1])
 xlim([-1,1])
