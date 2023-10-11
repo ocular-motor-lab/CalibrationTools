@@ -33,11 +33,13 @@ eyeGlobePositionPix = [400, 200];
 % camera location relative to eye - cm
 camX = 45;
 camY = 0;
-camZ = -45;
+camZ = -20;
 camPosition = [camX,camY,camZ]; % eye centered reference frame (head)
+camOrientation = camPosition/sqrt(sum(camPosition.^2));
 
 referencePosition = [distanceDispEye,0,0]; % eye centered reference frame (head)
-camEyeDispDots = Display2Cam_simulation(dispDots_c, referencePosition, camPosition, eyeGlobePositionPix, eyeRadiusPix);
+referenceOrientation = [1,0,0];
+camEyeDispDots = Display2Cam_simulation(dispDots_c, referenceOrientation, camOrientation, eyeGlobePositionPix, eyeRadiusPix);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % figures
@@ -54,39 +56,39 @@ xlim([-82,82])
 
 subplot(1,2,2)
 plot(camEyeDispDots(:,1),camEyeDispDots(:,2),'.','MarkerSize',2)
-xlabel('Horizontal (cm)')
-ylabel('Vertical (cm)')
+xlabel('Horizontal (px)')
+ylabel('Vertical (px)')
 title('Eye Positions Looking at Displayed Dots')
 subtitle('Camera on the table below the eye level')
 axis equal
 ylim([0,400])
 xlim([0,700])
-return
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-eyeDispDots = Cam2Display_simulation(camEyeDispDots(:,2:3), referencePosition, camPosition, eyeRadius );
+eyeDispDots = Cam2Display_simulation(camEyeDispDots, referenceOrientation, camOrientation, eyeRadiusPix);
 
 % figures
 figure
 
 subplot(1,2,1)
-plot(camEyeDispDots(:,2),camEyeDispDots(:,3),'.','MarkerSize',2)
-xlabel('Horizontal (cm)')
-ylabel('Vertical (cm)')
+plot(camEyeDispDots(:,1),camEyeDispDots(:,2),'.','MarkerSize',2)
+xlabel('Horizontal (px)')
+ylabel('Vertical (px)')
 sgtitle('Eye Positions Looking at Displayed Dots')
 subtitle('Camera on the table below the eye level')
 axis equal
-ylim([-1,1])
-xlim([-1,1])
+ylim([0,400])
+xlim([0,700])
 
 subplot(1,2,2)
 plot(eyeDispDots(:,2),eyeDispDots(:,3),'.','MarkerSize',2)
-xlabel('Horizontal (cm)')
-ylabel('Vertical (cm)')
+xlabel('Horizontal (px)')
+ylabel('Vertical (px)')
 subtitle('Camera infront of the eye while at the primary position')
 axis equal
-ylim([-1,1])
-xlim([-1,1])
+ylim([0,400])
+xlim([0,700])
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
