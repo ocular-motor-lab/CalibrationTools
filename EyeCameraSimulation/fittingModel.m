@@ -16,17 +16,20 @@ dispDots(:,2:3) = dots;
 eyeRadiusPix = 160; %cm, arbitrary number
 eyeGlobePositionPix = [400, 200];
 
-camZ = -20;
-camY = 0;
+
+camAlpha = -25;% the elevation angle in degree
+camBeta = 0; % the azimuth angle in degree
+%camZ = -20;
+%camY = 0;
 
 referenceOrientation = [1,0,0];
 %% simulation of gaze positions during calibration
-measured = Display2Cam_simulation(dispDots_c, referenceOrientation, camZ, camY, eyeGlobePositionPix, eyeRadiusPix);
+measured = Display2Cam_simulation(dispDots_c, referenceOrientation, camAlpha, camBeta, eyeGlobePositionPix, eyeRadiusPix);
 measured_noisy = measured+randn(size(measured))*10;
 %% end of simulation
 costf = @(params)( sum(sum((measured_noisy - Display2Cam_simulation(dispDots_c,referenceOrientation,params(4),params(5), params(1:2),params(3))).^2)));
 
-estparams = fmincon(costf,[0,0,0,-1,-1],[],[],[],[],[0,0,0,-100,-100],[1000,1000,1000,100,100])
+estparams = fmincon(costf,[0,0,0,-1,-1],[],[],[],[],[0,0,0,-100,-100],[1000,1000,1000,0,0])
 
 estimatedPoints = Display2Cam_simulation(dispDots_c, referenceOrientation, estparams(4), estparams(5), estparams(1:2), estparams(3));
 

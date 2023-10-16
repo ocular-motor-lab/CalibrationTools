@@ -31,15 +31,17 @@ eyeGlobePositionPix = [400, 200];
 
 % assuming the camera is outside of the display plane
 % camera location relative to eye - cm
-camX = 45;
-camY = 0;
-camZ = -20;
-camPosition = [camX,camY,camZ]; % eye centered reference frame (head)
-camOrientation = camPosition/sqrt(sum(camPosition.^2));
+% camX = 45;
+% camY = 0;
+% camZ = -20;
+% camPosition = [camX,camY,camZ]; % eye centered reference frame (head)
+% camOrientation = camPosition/sqrt(sum(camPosition.^2));
+camAlpha = -25;
+camBeta = 90;
 
 referencePosition = [distanceDispEye,0,0]; % eye centered reference frame (head)
 referenceOrientation = [1,0,0];
-camEyeDispDots = Display2Cam_simulation(dispDots_c, referenceOrientation, camZ, eyeGlobePositionPix, eyeRadiusPix);
+camEyeDispDots = Display2Cam_simulation(dispDots_c, referenceOrientation, camAlpha,camBeta, eyeGlobePositionPix, eyeRadiusPix);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % figures
@@ -66,7 +68,7 @@ xlim([0,700])
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-eyeDispDots = Cam2Display_simulation(camEyeDispDots, referenceOrientation, camOrientation, eyeRadiusPix);
+eyeDispDots = Cam2Display_simulation(camEyeDispDots, referenceOrientation, camAlpha, camBeta, eyeGlobePositionPix, eyeRadiusPix);
 
 % figures
 figure
@@ -82,7 +84,7 @@ ylim([0,400])
 xlim([0,700])
 
 subplot(1,2,2)
-plot(eyeDispDots(:,2),eyeDispDots(:,3),'.','MarkerSize',2)
+plot(eyeDispDots(:,1),eyeDispDots(:,2),'.','MarkerSize',2)
 xlabel('Horizontal (px)')
 ylabel('Vertical (px)')
 subtitle('Camera infront of the eye while at the primary position')

@@ -1,14 +1,22 @@
-function camEyeDispDotsPix = Display2Cam_simulation(inputDot, referenceOrientation, camZ, camY, eyeGlobePosition, eyeRadius)
+function camEyeDispDotsPix = Display2Cam_simulation(inputDot, referenceOrientation, camAlpha, camBeta, eyeGlobePosition, eyeRadius)
 
 % assuming the camera is outside of the display plane
 % camera location relative to eye - cm
-camX = 45;
-%camY = 0;
-%camZ = -20;
-camPosition = [camX,camY,camZ]; % eye centered reference frame (head)
-cameraOrientation = camPosition/sqrt(sum(camPosition.^2));
+% camX = 45;
+% %camY = 0;
+% %camZ = -20;
+% camPosition = [camX,camY,camZ]; % eye centered reference frame (head)
+% cameraOrientation = camPosition/sqrt(sum(camPosition.^2));
 
-
+% assuming the camera is outside of the display plane
+% finding the camera orientation vector based on elevation camAlpha and azimuth camBeta
+% camAlpha and camBeta inputs in degree
+camAlphaRad = deg2rad(camAlpha);
+camBetaRad = deg2rad(camBeta);
+camX = cos(camAlphaRad);
+camY = sin(camAlphaRad) * sin(camBetaRad);
+camZ = sin(camAlphaRad) * cos(camBetaRad); 
+cameraOrientation = [camX,camY,camZ];
 % create vectors from eye to the dot with eye radius length
 % vectors point to the center of the pupil when looking at the points in
 % the display
