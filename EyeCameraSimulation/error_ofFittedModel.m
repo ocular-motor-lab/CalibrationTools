@@ -8,7 +8,7 @@ close
 %% error for different range
 visAngleRange = [10, 15, 20, 25, 30, 35, 40];
 numberDots = [3,3; 4,4; 5,5];
-noiseScale = tan(deg2rad(1))*85;
+noiseScale = tan(deg2rad(3))*85;
 % j=1;
 for j = 1:size(numberDots,1)
 for v = 1:size(visAngleRange,2)
@@ -28,17 +28,28 @@ for v = 1:size(visAngleRange,2)
     for i = 1:1000
         estparams = fmincon(costf,[-1,0,0,0],[],[],[],[],[-100,0,0,0],[0,1000,1000,1000]);
         estimatedPoints = Display2Cam_simulation(dispDots, referenceOrientation, estparams(1),0,[estparams(2),estparams(3)],estparams(4));
+        estparamsAll{i,j,v} = estparams; 
         % error of the estimated
-        if i == 1, e = errorf(estparams);
-        else, e = (errorf(estparams) + e)./2; 
+        tmp = errorf(estparams);
+        if i == 1, e = tmp;
+        else, e = (tmp + e)./2; 
         end
+        errorAll{i,j,v} = tmp;
     end
     err(v,j) = e;
 end
 end
 
 save("simData")
-
+%%
+figure,
+for i = 1:size(numberDots,1)
+    plot(visAngleRange,err(:,i)./(numberDots(i,1)*numberDots(i,2)),'.-','MarkerSize',10)
+    hold on
+end
+xlabel("Total Visaul Angle of Presented Dots (degree)")
+ylabel("Mean Variance")
+legend(["3x3","4x4","5x5"])
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%Functions%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

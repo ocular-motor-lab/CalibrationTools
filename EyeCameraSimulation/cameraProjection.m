@@ -37,7 +37,7 @@ eyeGlobePositionPix = [400, 200];
 % camPosition = [camX,camY,camZ]; % eye centered reference frame (head)
 % camOrientation = camPosition/sqrt(sum(camPosition.^2));
 camAlpha = -25;
-camBeta = 90;
+camBeta = 0;
 
 referencePosition = [distanceDispEye,0,0]; % eye centered reference frame (head)
 referenceOrientation = [1,0,0];
