@@ -17,8 +17,8 @@ eyeRadiusPix = 160; %cm, arbitrary number
 eyeGlobePositionPix = [400, 200];
 
 
-camAlpha = -25;% the elevation angle in degree
-camBeta = 0; % the azimuth angle in degree
+camAlpha = -25;% the angle to positive x direction in degree
+camBeta = 0; % the angle of the projection on y-z plane and z in degree
 %camZ = -20;
 %camY = 0;
 
