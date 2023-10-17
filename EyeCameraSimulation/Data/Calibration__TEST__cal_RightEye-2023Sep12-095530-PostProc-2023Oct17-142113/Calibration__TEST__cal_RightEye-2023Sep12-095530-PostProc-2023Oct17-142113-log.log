@@ -1,0 +1,8 @@
+14:21:13 - PlayVideo :; M:\Roksana\OpenIrisVideo\Calibration__TEST__cal_RightEye-2023Sep12-095530\Calibration__TEST__cal_RightEye-2023Sep12-095530-Left.aviM:\Roksana\OpenIrisVideo\Calibration__TEST__cal_RightEye-2023Sep12-095530\Calibration__TEST__cal_RightEye-2023Sep12-095530-Right.avi
+14:21:13 - LoadCalibration
+14:21:13 - StartTracking
+14:21:13 - Grabbing loop started.
+14:22:19 - Type of Recorder -> (Frames to record >> Frames not dropped >> Fames recorded)
+14:22:19 - RawFramesRecorder -> (7883 >> 7883 >> 0)
+14:22:19 - ProcessedFramesRecorder -> (7883 >> 7883 >> 7883)
+14:22:19 - EventRecorder -> (0 >> 0 >> 0)
