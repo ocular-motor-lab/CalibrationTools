@@ -53,6 +53,10 @@ xlim([0,700])
 set(gca, 'YDir','reverse')
 plot(cos(0:0.1:(2*pi))*estparams(4)+estparams(2),sin(0:0.1:(2*pi))*estparams(4)+estparams(3))
 
+legend(['measured','estimated','estimated eye globe'])
+xlabel('Pixel'),ylabel('Pixel')
+axis equal
+
 %%
 figure
 plot(dots(:,1))
