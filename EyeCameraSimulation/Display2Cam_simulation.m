@@ -32,13 +32,13 @@ eyeDispDots = normDispDots;
 
 % quaternion between x axis from the eye toward display (primary position; for example: [distanceDispEye,0,0])
 % and new x' toward camera (reference position)
-q = CalculateQuaternion(referenceOrientation, cameraOrientation);
+q = CalculateQuaternion( referenceOrientation, cameraOrientation);
 camEyeDispDots = rotateframe(q,eyeDispDots);
 
 % projecting the unitary globe into the camera to get the points in pixels 
 % in image coordinates
 
 camEyeDispDotsPix(:,1) = camEyeDispDots(:,2)*eyeRadius + eyeGlobePosition(1);
-camEyeDispDotsPix(:,2) = camEyeDispDots(:,3)*eyeRadius + eyeGlobePosition(2);
+camEyeDispDotsPix(:,2) = -camEyeDispDots(:,3)*eyeRadius + eyeGlobePosition(2);
 
 end

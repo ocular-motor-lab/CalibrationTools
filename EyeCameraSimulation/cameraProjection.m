@@ -4,7 +4,7 @@
 % at an angle.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clear
-close all
+%close all
 %% Parameters and assumptions
 % distance between display and eye
 distanceDispEye = 85; %cm, arbitrary number
@@ -15,7 +15,7 @@ distanceDispEye = 85; %cm, arbitrary number
 % the coordinates of the displayed dots
 rows = 9;
 columns = 9;
-[dots, dots_c] = GenerateDisplayDots(rows,columns,20,10); 
+[dots, dots_c] = GenerateDisplayDots(rows,columns,20,10,30); 
 
 dispDots_c = zeros(size(dots_c,1), 3); %3D
 dispDots_c(:,1) = ones(1,size(dots_c,1)) * distanceDispEye;
@@ -65,6 +65,7 @@ subtitle('Camera on the table below the eye level')
 axis equal
 ylim([0,400])
 xlim([0,700])
+set(gca, 'YDir','reverse')
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -82,6 +83,7 @@ subtitle('Camera on the table below the eye level')
 axis equal
 ylim([0,400])
 xlim([0,700])
+set(gca, 'YDir','reverse')
 
 subplot(1,2,2)
 plot(eyeDispDots(:,1),eyeDispDots(:,2),'.','MarkerSize',2)
@@ -91,6 +93,7 @@ subtitle('Camera infront of the eye while at the primary position')
 axis equal
 ylim([0,400])
 xlim([0,700])
+set(gca, 'YDir','reverse')
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

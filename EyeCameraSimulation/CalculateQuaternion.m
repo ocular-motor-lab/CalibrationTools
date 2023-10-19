@@ -1,5 +1,6 @@
 function q = CalculateQuaternion(a, b)
-% generate the quaternion for rotation from 3d vector "a" to "b"
+% generate the quaternion for rotation from 3d vector "b" to "a" with an
+% axis perpendicular to the plane that containes a and b.
 % make unit vectors
 a1 = a./sqrt(sum(a.^2));
 b1 = b./sqrt(sum(b.^2));
