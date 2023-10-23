@@ -23,11 +23,19 @@ end
 measuredData = struct2table(segData);
 measuredData = measuredData(1:9,:);
 %%
-h = -10;
-v = -7.5;
+h_angle = 10;
+v_angle = 7.5;
+ 
 distanceDispEye = 82;
+
+h_dis = tan(deg2rad(h_angle)) * distanceDispEye;
+v_dis = tan(deg2rad(v_angle)) * distanceDispEye;
+
+h_dis = - h_dis;
+v_dis = - v_dis;
+
 load('M:\Roksana\Micro6D\Calibration__TEST__cal_RightEye\trialDataTable.mat','trialDataTable');
-dots = [[0,0];[h,0];[-h,0];[0,v];[0,-v];[h,v];[h,-v];[-h,v];[-h,-v]];
+dots = [[0,0];[h_dis,0];[-h_dis,0];[0,v_dis];[0,-v_dis];[h_dis,v_dis];[h_dis,-v_dis];[-h_dis,v_dis];[-h_dis,-v_dis]];
 dots = dots(trialDataTable.TargetPosition(1:end-1),:);
 dispDots(:,1) = ones(1,size(dots,1)) * distanceDispEye;
 dispDots(:,2:3) = dots;
@@ -46,14 +54,18 @@ estimatedPoints = Display2Cam_simulation(dispDots, referenceOrientation, estpara
 
 figure
 plot(measured(:,1),measured(:,2),'b+')
-hold
+hold on
+
 plot(estimatedPoints(:,1),estimatedPoints(:,2),'ro')
+hold on
+
 ylim([0,400])
 xlim([0,700])
 set(gca, 'YDir','reverse')
+
 plot(cos(0:0.1:(2*pi))*estparams(4)+estparams(2),sin(0:0.1:(2*pi))*estparams(4)+estparams(3))
 
-legend(['measured','estimated','estimated eye globe'])
+legend('measured','estimated','estimated eye globe')
 xlabel('Pixel'),ylabel('Pixel')
 axis equal
 
