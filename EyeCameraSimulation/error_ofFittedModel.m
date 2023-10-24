@@ -6,9 +6,13 @@ close
 % [dispDots,eyeRadiusPix,eyeGlobePositionPix,camAlpha,camBeta,referenceOrientation] = InitTrueValues();
 
 %% error for different range
+clear
+close
+
 visAngleRange = [10, 15, 20, 25, 30, 35, 40];
-numberDots = [3,3; 4,4; 5,5];
-noiseScale = tan(deg2rad(3))*85;
+numberDots = [3,3]%; 4,4; 5,5];
+noiseScale = tan(deg2rad(5))*85;
+rep = 1000;
 % j=1;
 for j = 1:size(numberDots,1)
 for v = 1:size(visAngleRange,2)
@@ -25,7 +29,7 @@ for v = 1:size(visAngleRange,2)
 
     % bootstrap
     e = 0;
-    for i = 1:1000
+    for i = 1:rep
         estparams = fmincon(costf,[-1,0,0,0],[],[],[],[],[-100,0,0,0],[0,1000,1000,1000]);
         estimatedPoints = Display2Cam_simulation(dispDots, referenceOrientation, estparams(1),0,[estparams(2),estparams(3)],estparams(4));
         estparamsAll{i,j,v} = estparams; 
@@ -40,7 +44,7 @@ for v = 1:size(visAngleRange,2)
 end
 end
 
-save("simData")
+save("simData_noise5")
 %%
 figure,
 for i = 1:size(numberDots,1)
@@ -50,6 +54,27 @@ end
 xlabel("Total Visaul Angle of Presented Dots (degree)")
 ylabel("Mean Variance")
 legend(["3x3","4x4","5x5"])
+
+%% 
+
+file_ = {'simData.mat';'simData_noise5.mat'; 'simData_noise10.mat'};
+for f = 1:size(file_,1)
+    load(file_{f})
+    for v = 1:size(visAngleRange,2)
+        estparam_average(f,v,:) = sum(cell2mat(estparamsAll(:,1,v)),1)./size(estparamsAll,1);
+    end
+    plot(visAngleRange,estparam_average(f,:,1),'.-','MarkerSize',10)
+    hold on
+
+end
+
+plot(visAngleRange,ones(size(visAngleRange))*(-25),'--','MarkerSize',10)
+hold on
+
+xlabel("Total Visaul Angle of Presented Dots (degree)")
+ylabel("Est. Camera Angle (degree)")
+legend(["Noise - 3 deg","5 deg","10 deg","Actual Camera Angle"])
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%Functions%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
