@@ -10,41 +10,50 @@ clear
 close
 
 visAngleRange = [10, 15, 20, 25, 30, 35, 40];
-numberDots = [3,3]%; 4,4; 5,5];
-noiseScale = tan(deg2rad(5))*85;
+numberDots = [3,3; 4,4; 5,5];
+noiseScale = tan(deg2rad(11))*85;
 rep = 1000;
 % j=1;
+c=1;
 for j = 1:size(numberDots,1)
-for v = 1:size(visAngleRange,2)
-    v
-    [dispDots,eyeRadiusPix,eyeGlobePositionPix,camAlpha,camBeta,referenceOrientation] = InitTrueValues(visAngleRange(v), numberDots(j,1),numberDots(j,2));
+    for v = 1:size(visAngleRange,2)
+        v
+        [dispDots,eyeRadiusPix,eyeGlobePositionPix,camAlpha,camBeta,referenceOrientation] = InitTrueValues(visAngleRange(v), numberDots(j,1),numberDots(j,2));
 
-    measured = Display2Cam_simulation(dispDots, referenceOrientation, camAlpha, camBeta, eyeGlobePositionPix, eyeRadiusPix);
-    measured_noisy = measured+randn(size(measured))*noiseScale;
+        measured = Display2Cam_simulation(dispDots, referenceOrientation, camAlpha, camBeta, eyeGlobePositionPix, eyeRadiusPix);
 
-    costf = @(params)...
-        ( sum(sum((measured_noisy - Display2Cam_simulation(dispDots,referenceOrientation,params(1),0,[params(2),params(3)],params(4))).^2)));
-    errorf = @(params)...
-        ( sqrt(sum(sum( (measured - Display2Cam_simulation(dispDots,referenceOrientation,params(1),0,[params(2),params(3)],params(4))).^2 ))) );
+        % bootstrap
+        e = 0;
+        for i = 1:rep
+            measured_noisy = measured+randn(size(measured))*noiseScale;
 
-    % bootstrap
-    e = 0;
-    for i = 1:rep
-        estparams = fmincon(costf,[-1,0,0,0],[],[],[],[],[-100,0,0,0],[0,1000,1000,1000]);
-        estimatedPoints = Display2Cam_simulation(dispDots, referenceOrientation, estparams(1),0,[estparams(2),estparams(3)],estparams(4));
-        estparamsAll{i,j,v} = estparams; 
-        % error of the estimated
-        tmp = errorf(estparams);
-        if i == 1, e = tmp;
-        else, e = (tmp + e)./2; 
+            costf = @(params)...
+                ( sum(sum((measured_noisy - Display2Cam_simulation(dispDots,referenceOrientation,params(1),0,[params(2),params(3)],params(4))).^2)));
+            errorf = @(params)...
+                ( sqrt(sum(sum( (measured - Display2Cam_simulation(dispDots,referenceOrientation,params(1),0,[params(2),params(3)],params(4))).^2 ))) );
+
+            estparams = fmincon(costf,[-1,0,0,0],[],[],[],[],[-100,0,0,0],[0,1000,1000,1000]);
+            estimatedPoints = Display2Cam_simulation(dispDots, referenceOrientation, estparams(1),0,[estparams(2),estparams(3)],estparams(4));
+            
+            estparamsAll(c,:) = [estparams(1),estparams(2),estparams(3),estparams(4),numberDots(j,1)*numberDots(j,2),visAngleRange(v),noiseScale];
+            c=c+1;
+            % error of the estimated
+            tmp = errorf(estparams);
+            if i == 1, e = tmp;
+            else, e = (tmp + e)./2;
+            end
+            errorAll{i,j,v} = tmp;
         end
-        errorAll{i,j,v} = tmp;
+        err(v,j) = e;
     end
-    err(v,j) = e;
-end
 end
 
-save("simData_noise5")
+estparamsAllTable = table(estparamsAll(:,1),estparamsAll(:,2),estparamsAll(:,3),estparamsAll(:,4),estparamsAll(:,5),estparamsAll(:,6),estparamsAll(:,7)...
+    ,'VariableNames',{'CameraAngle','EyeGlobePosition_X'...
+    ,'EyeGlobePosition_Y','EyeGlobeRadius','NumberOfDots','DiplayedVisualAngle','NoiseScale'});
+
+
+save("simData_noise1_numberOfDots")
 %%
 figure,
 for i = 1:size(numberDots,1)
@@ -55,26 +64,45 @@ xlabel("Total Visaul Angle of Presented Dots (degree)")
 ylabel("Mean Variance")
 legend(["3x3","4x4","5x5"])
 
-%% 
+%%
 
-file_ = {'simData.mat';'simData_noise5.mat'; 'simData_noise10.mat'};
+file_ = {'simData_noise0point25.mat';'simData_noise0point5.mat'; 'simData_noise1.mat';...
+    'simData_noise2.mat';'simData_noise4.mat';'simData_noise8.mat';'simData_noise16.mat'};
+noise = [tan(deg2rad(0.25)),tan(deg2rad(0.5)),tan(deg2rad(1)),tan(deg2rad(2)),...
+    tan(deg2rad(4)),tan(deg2rad(8)),tan(deg2rad(16))].*85;
+tbl = [];
 for f = 1:size(file_,1)
     load(file_{f})
-    for v = 1:size(visAngleRange,2)
-        estparam_average(f,v,:) = sum(cell2mat(estparamsAll(:,1,v)),1)./size(estparamsAll,1);
+    if f == 1, tbl = estparamsAllTable;
+    else, tbl = [tbl;estparamsAllTable]; 
     end
-    plot(visAngleRange,estparam_average(f,:,1),'.-','MarkerSize',10)
-    hold on
-
 end
 
-plot(visAngleRange,ones(size(visAngleRange))*(-25),'--','MarkerSize',10)
-hold on
+gstat = grpstats(tbl,["NumberOfDots","DiplayedVisualAngle","NoiseScale"],["mean","std"]);
 
-xlabel("Total Visaul Angle of Presented Dots (degree)")
-ylabel("Est. Camera Angle (degree)")
-legend(["Noise - 3 deg","5 deg","10 deg","Actual Camera Angle"])
+h1 = figure;
+h2 = figure;
+for i = 1:length(noise)-2
+    set(0,'CurrentFigure',h1)
+    subplot(3,3,i)
+    hist(tbl(tbl.DiplayedVisualAngle == 20 & tbl.NoiseScale == noise(i),: ).CameraAngle)
+    title(strcat('Noise = ',num2str(round(noise(i),2)),' cm'))
+    
 
+    tmp = gstat(gstat.NoiseScale == noise(i),:);
+    set(0,'CurrentFigure',h2)
+    %plot(tmp.DiplayedVisualAngle, abs(tmp.mean_CameraAngle + 25),'LineWidth',3)
+    %hold on,
+    errorbar(tmp.DiplayedVisualAngle, abs(tmp.mean_CameraAngle + 25),(tmp.std_CameraAngle)*0,tmp.std_CameraAngle/2,'LineWidth',3)
+    hold on
+end
+xlabel("Total Visaul Angle of Presented Dots (degree)") 
+ylabel("Absolute Error of Estimated Camera Angle (degree)")
+legend({'Noise = 0.25 deg','std','0.5','1','2','4','8','16'})
+
+set(0,'CurrentFigure',h1)
+sgtitle('3x3 Dots, Visual Degree of 10')
+xlabel('Estimated Camera Angle (deg)')
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%Functions%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
