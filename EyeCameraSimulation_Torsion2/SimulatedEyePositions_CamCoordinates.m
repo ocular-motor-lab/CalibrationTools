@@ -1,4 +1,4 @@
-function [camEyeImage qCameraToEye] = SimulatedEyePositions_CamCoordinates(eyeMarks, cam_x, camAlpha, camBeta, pixPerCm, eyeGlobeCenterPx)
+function camEyeImage = SimulatedEyePositions_CamCoordinates(eyeMarks, cam_x, camAlpha, camBeta, pixPerCm, eyeGlobeCenterPx)
 %inputs:
 % eyeMarks: nx3 matrix, output of SimulatedEyePositions_EyeCoordinates
 % cam_x: scalar, distance of camera in x direction in eye coordinates
@@ -28,10 +28,10 @@ rotAxis = cross(norm_xeyecor,norm_xcamcor);
 % apply the rotation, inverse the y and z
 for i = 1:size(eyeMarks,1)
     % change of ref frame frome eye to camera (still in 3D space)
-    [camEyeMarks(i,:), qCameraToEye] = RotateFrameAlongAxis(eyeMarks(i,:), angleDeg, rotAxis);
+    camEyeMarks(i,:) = RotateFrameAlongAxis(eyeMarks(i,:), angleDeg, rotAxis);
 
     % projection to the camera image (from cm to pix)
-    camEyeMarks(i,2:3) = -camEyeMarks(i,2:3)*pixPerCm;
+    camEyeMarks(i,2:3) = camEyeMarks(i,2:3)*pixPerCm;
 end
 
 %apply center of the eye globe offset
@@ -40,7 +40,7 @@ camEyeImage = camEyeMarks(:,2:3) + eyeGlobeCenterPx;
 end
 
 
-function [rotatedPoint q] = RotateFrameAlongAxis(input, angleDeg, rotAxis)
+function rotatedPoint = RotateFrameAlongAxis(input, angleDeg, rotAxis)
 %axis of rotation
 w = rotAxis./sqrt(sum(rotAxis.^2));
 
