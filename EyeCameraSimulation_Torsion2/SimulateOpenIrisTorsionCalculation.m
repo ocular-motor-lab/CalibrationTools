@@ -1,18 +1,22 @@
-function torsion = SimulateOpenIrisTorsionCalculation(camEyeImagePoints, eyeModelCenterPx, eyeModelRadiusPx)
+function [torsion,camEyeImagePointsRotated] = SimulateOpenIrisTorsionCalculation(camEyeImagePoints, eyeModelCenterPx, eyeModelRadiusPx)
 % Simulating open iris torsion measurment from camera image  
 %inputs: 
 % camEyeImagePoints is nx2 matrix, output of the
 %SimulatedEyePositions_CamCoordinates function
-% eyeModelCenterPx 
-x = camEyeImagePoints(:,1) - eyeModelCenterPx(1);
-y = camEyeImagePoints(:,2) - eyeModelCenterPx(2);
+% eyeModelCenterPx is 1x2 array in pixel units, the pupil center x, y in
+%the image coordinates
+% eyeModelRadiusPx is a scalar in pixels
 
-angle_allPoints = atan2(y, x);
+% following the camera coordinates instead of the image coordinates
+y = camEyeImagePoints(:,1) - eyeModelCenterPx(1);
+z = camEyeImagePoints(:,2) - eyeModelCenterPx(2);
+
+angle_allPoints = atan2(z, y);
 
 % Then, get the eccentricity from the length of the vector in pixels to 
 % the angle that moves the eye that far
-ecc_allPoints = asin(sqrt(y .* y + x .* x) / eyeModelRadiusPx);
-z = cos(ecc_allPoints)*eyeModelRadiusPx;
+ecc_allPoints = asin(sqrt(z .* z + y .* y) / eyeModelRadiusPx);
+x = cos(ecc_allPoints)*eyeModelRadiusPx;
      
 angle = angle_allPoints(1);
 ecc = -ecc_allPoints(1); % IMPORTANT THIS IS THE OPOSITE AS OPEN IRIS (MINUS SIGN) 
@@ -22,9 +26,9 @@ ecc = -ecc_allPoints(1); % IMPORTANT THIS IS THE OPOSITE AS OPEN IRIS (MINUS SIG
 % coordinates to camera coordinates (eye looking straight ahead to the
 % camera)
 q1 = cos(ecc/2);
-q2 = -sin(angle) * sin(ecc/2);
-q3 = cos(angle) * sin(ecc/2);
-q4 = 0;
+q2 =  0;
+q3 = -sin(angle)* sin(ecc/2);
+q4 = cos(angle) * sin(ecc/2);
 
 q = quaternion(q1,q2,q3,q4);
 
@@ -36,10 +40,10 @@ camEyeImagePointsRotated = rotatepoint(q,camEyeImagePoints3D);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %Calculate torsion with 4 points % LEFT RIGHT UP DOWN
-t1 = 90-atan2d(camEyeImagePointsRotated(2,2),camEyeImagePointsRotated(2,1));
-t2 = -atan2d(camEyeImagePointsRotated(3,2),camEyeImagePointsRotated(3,1))-90;
-t3 = -atan2d(camEyeImagePointsRotated(4,2),camEyeImagePointsRotated(4,1));
-t4 = 180-atan2d(camEyeImagePointsRotated(5,2),camEyeImagePointsRotated(5,1));
+t1 = 90-atan2d(camEyeImagePointsRotated(2,3),camEyeImagePointsRotated(2,2));
+t2 = -atan2d(camEyeImagePointsRotated(3,3),camEyeImagePointsRotated(3,2))-90;
+t3 = -atan2d(camEyeImagePointsRotated(4,3),camEyeImagePointsRotated(4,2));
+t4 = 180-atan2d(camEyeImagePointsRotated(5,3),camEyeImagePointsRotated(5,2));
 
 torsion = mean([t1,t2,t3,t4]);
 
