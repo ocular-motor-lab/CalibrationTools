@@ -9,11 +9,11 @@ cameraTiltAngle  = -25;
 cameraPositionXcm = 50;
 
 % gazeVector = [cosd(30) sind(30) 0];
- gazeVector = [1 0 0]; % eye looking straight ahead
-% gazeVector = [cosd(cameraTiltAngle) 0 sind(cameraTiltAngle)]; % eye looking at the camera
+% gazeVector = [1 0 0]; % eye looking straight ahead
+ gazeVector = [cosd(cameraTiltAngle) 0 sind(cameraTiltAngle)]; % eye looking at the camera
 
 %% Simulation 
-eyeMarks = SimulatedEyePositions_EyeCoordinates(60, 60, 60, 0, gazeVector, eyeModelRadiuscm);
+eyeMarks = SimulatedEyePositions_EyeCoordinates(60, 60, 60, 10, gazeVector, eyeModelRadiuscm);
 camEyeImagePoints = SimulatedEyePositions_CamCoordinates(eyeMarks, cameraPositionXcm, cameraTiltAngle, 0,eyeModelRadiusPx/eyeModelRadiuscm, eyeModelCenterPx);
 [torsion,testRotatedcamEye] = SimulateOpenIrisTorsionCalculation(camEyeImagePoints, eyeModelCenterPx, eyeModelRadiusPx);
 

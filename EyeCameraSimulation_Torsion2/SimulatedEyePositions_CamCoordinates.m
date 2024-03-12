@@ -8,9 +8,8 @@ function camEyeImage = SimulatedEyePositions_CamCoordinates(eyeMarks, cam_x, cam
 % eyeGlobeCenter: 1x2 array, the pixel offset in the image of the eye 
 
 % cam location in eye coordinates
-cam_yz = tand(camAlpha)*cam_x;
-cam_z = cosd(camBeta)*cam_yz;
-cam_y = sind(camBeta)*cam_yz;
+cam_z = tand(camAlpha)*cam_x;
+cam_y = tand(camBeta)*cam_x;
 
 camPosition = [cam_x, cam_y, cam_z];
 
@@ -24,6 +23,9 @@ angleDeg = acosd( dot(norm_xeyecor,norm_xcamcor) );
 
 % axis of rotation
 rotAxis = cross(norm_xeyecor,norm_xcamcor);
+
+% demo
+plotRotatedCoordinates_Demo(angleDeg, rotAxis)
 
 % apply the rotation, inverse the y and z
 for i = 1:size(eyeMarks,1)
@@ -60,5 +62,52 @@ rotatedPoint = rotateframe(q,input);
 
 end
 
+function rotatedPoint = RotatePointsAlongAxis(input, angleDeg, rotAxis)
+%axis of rotation
+w = rotAxis./sqrt(sum(rotAxis.^2));
 
+%anlge of rotaiont
+alpha = deg2rad(angleDeg);
+
+%the quaternion
+q1 = cos(alpha/2);
+q2 = w(1) * sin(alpha/2);
+q3 = w(2) * sin(alpha/2);
+q4 = w(3) * sin(alpha/2);
+
+q = quaternion(q1,q2,q3,q4);
+
+%apply the quaternion
+rotatedPoint = rotatepoint(q,input);
+
+end
+
+function plotRotatedCoordinates_Demo(angleDeg, rotAxis)
+eyeCoor = [1,0,0;0,1,0;0,0,1];
+
+camCoor(1,:) = RotatePointsAlongAxis(eyeCoor(1,:), angleDeg, rotAxis);
+camCoor(2,:) = RotatePointsAlongAxis(eyeCoor(2,:), angleDeg, rotAxis);
+camCoor(3,:) = RotatePointsAlongAxis(eyeCoor(3,:), angleDeg, rotAxis);
+
+figure,
+plot3([0,eyeCoor(1,1)],[0,eyeCoor(1,2)],[0,eyeCoor(1,3)],'-k'),hold on
+plot3([0,eyeCoor(2,1)],[0,eyeCoor(2,2)],[0,eyeCoor(2,3)],'-k'),hold on
+plot3([0,eyeCoor(3,1)],[0,eyeCoor(3,2)],[0,eyeCoor(3,3)],'-k'),hold on
+
+text(eyeCoor(1,1),eyeCoor(1,2),eyeCoor(1,3),['   ' 'eye x'],'HorizontalAlignment','left','FontSize',8);
+text(eyeCoor(2,1),eyeCoor(2,2),eyeCoor(2,3),['   ' 'eye y'],'HorizontalAlignment','left','FontSize',8);
+text(eyeCoor(3,1),eyeCoor(3,2),eyeCoor(3,3),['   ' 'eye z'],'HorizontalAlignment','left','FontSize',8);
+
+plot3([0,camCoor(1,1)],[0,camCoor(1,2)],[0,camCoor(1,3)],'-b'),hold on
+plot3([0,camCoor(2,1)],[0,camCoor(2,2)],[0,camCoor(2,3)],'-b'),hold on
+plot3([0,camCoor(3,1)],[0,camCoor(3,2)],[0,camCoor(3,3)],'-b'),hold on
+
+text(camCoor(1,1),camCoor(1,2),camCoor(1,3),['   ' 'cam x'],'HorizontalAlignment','left','FontSize',8,'Color','b');
+text(camCoor(2,1),camCoor(2,2),camCoor(2,3),['   ' 'cam y'],'HorizontalAlignment','left','FontSize',8,'Color','b');
+text(camCoor(3,1),camCoor(3,2),camCoor(3,3),['   ' 'cam z'],'HorizontalAlignment','left','FontSize',8,'Color','b');
+
+
+
+
+end
 

@@ -11,15 +11,15 @@ function [qCamRefToEyeCoordinates, qEyePosInRef2Camera, qCamera2Eye] = Calculate
 pupilCenter = [eyeDataH eyeDataV];
   
 y = pupilCenter(1) - eyeCalibrationModelCenter(1);
-z = pupilCenter(2) - eyeCalibrationModelCenter(2);
+z = ( pupilCenter(2) - eyeCalibrationModelCenter(2) );
 
 angle = atan2(z, y);
 ecc = -( asin( sqrt(z .* z + y .* y)  / eyeCalibrationModelRad) );
       
 q1 = cos(ecc/2);
 q2 = 0;
-q3 = -sin(angle) * sin(ecc/2);
-q4 = cos(angle) * sin(ecc/2);
+q3 = cos(angle) * sin(ecc/2);
+q4 = -sin(angle) * sin(ecc/2);
 
 q = quaternion(q1,q2,q3,q4);
  
@@ -33,7 +33,7 @@ q3 = 0;
 q4 = 0;
 qt = quaternion(q1,q2,q3,q4);
 
-% full rotation is q and qt in sequence still in camera reference frame
+% full rotation is q and qt in sequence, still in camera reference frame
 qEyePosInCamera2Ref = qt*q;
 qEyePosInRef2Camera = quatinv(qEyePosInCamera2Ref);
 % Last step is to calculate the full quaternion from camera reference position to
@@ -43,9 +43,8 @@ qEyePosInRef2Camera = quatinv(qEyePosInCamera2Ref);
 % calculate the quaternion to rotate eye positions from camera coordinates 
 % to global eye coordinates  
 % cam location in eye coordinates
-cam_yz = tand(camAlpha)*cam_x;
-cam_z = cosd(camBeta)*cam_yz;
-cam_y = sind(camBeta)*cam_yz;
+cam_z = tand(camAlpha)*cam_x;
+cam_y = tand(camBeta)*cam_x;
 
 camPosition = [cam_x, cam_y, cam_z];
 
@@ -62,14 +61,11 @@ rotAxis = cross(norm_xeyecor,norm_xcamcor);
 
 w = rotAxis./sqrt(sum(rotAxis.^2));
 
-%anlge of rotaiont
-alpha = deg2rad(angleDeg);
-
 %the quaternion
-q1 = cos(alpha/2);
-q2 = w(1) * sin(alpha/2);
-q3 = w(2) * sin(alpha/2);
-q4 = w(3) * sin(alpha/2);
+q1 = cos(angleDeg/2);
+q2 = w(1) * sin(angleDeg/2);
+q3 = w(2) * sin(angleDeg/2);
+q4 = w(3) * sin(angleDeg/2);
 
 qEye2Camera = quaternion(q1,q2,q3,q4);
 qCamera2Eye = quatinv(qEye2Camera);

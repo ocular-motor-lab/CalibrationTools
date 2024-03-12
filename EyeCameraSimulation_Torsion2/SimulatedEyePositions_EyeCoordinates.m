@@ -4,7 +4,7 @@ function eyeMarks = SimulatedEyePositions_EyeCoordinates(numDots, hdeg, vdeg, to
 % hdeg: scalar, total degree in horizontal direction
 % vdeg: scalar, total degree in vertical direction
 % torsion: scalar, degree of torsion
-% referenceDirection: unit vector direction (3d) that the center is pointing at
+% gazeDirection: unit vector direction (3d) toward the gaze direction
 % eyeRadius: scalar, eye globe radius 
 
 % mark a cross on the eye
@@ -19,7 +19,7 @@ if mod(numDots,2) ~= 1, numDots = numDots + 1;end
 %Eye coordinates
 %Following the right handed convention the direction
 % to the right is positive x,
-% to the up is positive y, and
+% to the up is positive z, and
 % to the direction of coming out of the xy plane is positive z
 c = 1;
 
@@ -32,12 +32,12 @@ h_rotationAngle = hdeg / numDots;
 v_rotationAngle = vdeg / numDots;
 
 for i = 1:(numDots-1)/2
-    %rotation along y axis creates horizontal dots
+    %rotation along y axis 
     eyeMarks(c,:) = RotateAlongAxis(eyeMarks(1,:), h_rotationAngle*i, [0,1,0]);
     c = c + 1;
     eyeMarks(c,:) = RotateAlongAxis(eyeMarks(1,:), h_rotationAngle*i, [0,-1,0]);
     c = c + 1;
-    %rotation along z axis creates vertical dots
+    %rotation along z axis 
     eyeMarks(c,:) = RotateAlongAxis(eyeMarks(1,:), v_rotationAngle*i, [0,0,1]);
     c = c + 1;
     eyeMarks(c,:) = RotateAlongAxis(eyeMarks(1,:), v_rotationAngle*i, [0,0,-1]);
