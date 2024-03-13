@@ -18,8 +18,8 @@ ecc = -( asin( sqrt(z .* z + y .* y)  / eyeCalibrationModelRad) );
       
 q1 = cos(ecc/2);
 q2 = 0;
-q3 = cos(angle) * sin(ecc/2);
-q4 = -sin(angle) * sin(ecc/2);
+q3 = -sin(angle)* sin(ecc/2);
+q4 = cos(angle) * sin(ecc/2);
 
 q = quaternion(q1,q2,q3,q4);
  
@@ -60,12 +60,13 @@ angleDeg = acosd( dot(norm_xeyecor,norm_xcamcor) );
 rotAxis = cross(norm_xeyecor,norm_xcamcor);
 
 w = rotAxis./sqrt(sum(rotAxis.^2));
+alpha = deg2rad(angleDeg);
 
 %the quaternion
-q1 = cos(angleDeg/2);
-q2 = w(1) * sin(angleDeg/2);
-q3 = w(2) * sin(angleDeg/2);
-q4 = w(3) * sin(angleDeg/2);
+q1 = cos(alpha/2);
+q2 = w(1) * sin(alpha/2);
+q3 = w(2) * sin(alpha/2);
+q4 = w(3) * sin(alpha/2);
 
 qEye2Camera = quaternion(q1,q2,q3,q4);
 qCamera2Eye = quatinv(qEye2Camera);

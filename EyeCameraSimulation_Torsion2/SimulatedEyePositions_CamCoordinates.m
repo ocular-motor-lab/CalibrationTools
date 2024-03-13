@@ -25,7 +25,7 @@ angleDeg = acosd( dot(norm_xeyecor,norm_xcamcor) );
 rotAxis = cross(norm_xeyecor,norm_xcamcor);
 
 % demo
-plotRotatedCoordinates_Demo(angleDeg, rotAxis)
+plotRotatedCoordinates_Demo(angleDeg, rotAxis,camPosition,eyeMarks)
 
 % apply the rotation, inverse the y and z
 for i = 1:size(eyeMarks,1)
@@ -82,12 +82,12 @@ rotatedPoint = rotatepoint(q,input);
 
 end
 
-function plotRotatedCoordinates_Demo(angleDeg, rotAxis)
+function plotRotatedCoordinates_Demo(angleDeg, rotAxis, camPosition, eyeMarks)
 eyeCoor = [1,0,0;0,1,0;0,0,1];
 
-camCoor(1,:) = RotatePointsAlongAxis(eyeCoor(1,:), angleDeg, rotAxis);
-camCoor(2,:) = RotatePointsAlongAxis(eyeCoor(2,:), angleDeg, rotAxis);
-camCoor(3,:) = RotatePointsAlongAxis(eyeCoor(3,:), angleDeg, rotAxis);
+camCoor(1,:) = camPosition + RotatePointsAlongAxis(eyeCoor(1,:), angleDeg, rotAxis);
+camCoor(2,:) = camPosition + RotatePointsAlongAxis(eyeCoor(2,:), angleDeg, rotAxis);
+camCoor(3,:) = camPosition + RotatePointsAlongAxis(eyeCoor(3,:), angleDeg, rotAxis);
 
 figure,
 plot3([0,eyeCoor(1,1)],[0,eyeCoor(1,2)],[0,eyeCoor(1,3)],'-k'),hold on
@@ -98,16 +98,19 @@ text(eyeCoor(1,1),eyeCoor(1,2),eyeCoor(1,3),['   ' 'eye x'],'HorizontalAlignment
 text(eyeCoor(2,1),eyeCoor(2,2),eyeCoor(2,3),['   ' 'eye y'],'HorizontalAlignment','left','FontSize',8);
 text(eyeCoor(3,1),eyeCoor(3,2),eyeCoor(3,3),['   ' 'eye z'],'HorizontalAlignment','left','FontSize',8);
 
-plot3([0,camCoor(1,1)],[0,camCoor(1,2)],[0,camCoor(1,3)],'-b'),hold on
-plot3([0,camCoor(2,1)],[0,camCoor(2,2)],[0,camCoor(2,3)],'-b'),hold on
-plot3([0,camCoor(3,1)],[0,camCoor(3,2)],[0,camCoor(3,3)],'-b'),hold on
+plot3([camPosition(1),camCoor(1,1)],[camPosition(2),camCoor(1,2)],[camPosition(3),camCoor(1,3)],'-b'),hold on
+plot3([camPosition(1),camCoor(2,1)],[camPosition(2),camCoor(2,2)],[camPosition(3),camCoor(2,3)],'-b'),hold on
+plot3([camPosition(1),camCoor(3,1)],[camPosition(2),camCoor(3,2)],[camPosition(3),camCoor(3,3)],'-b'),hold on
 
 text(camCoor(1,1),camCoor(1,2),camCoor(1,3),['   ' 'cam x'],'HorizontalAlignment','left','FontSize',8,'Color','b');
 text(camCoor(2,1),camCoor(2,2),camCoor(2,3),['   ' 'cam y'],'HorizontalAlignment','left','FontSize',8,'Color','b');
 text(camCoor(3,1),camCoor(3,2),camCoor(3,3),['   ' 'cam z'],'HorizontalAlignment','left','FontSize',8,'Color','b');
 
+hold on
 
+plot3(eyeMarks(:,1),eyeMarks(:,2),eyeMarks(:,3),'o')
 
+axis equal
 
 end
 
