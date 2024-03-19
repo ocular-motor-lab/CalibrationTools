@@ -6,11 +6,11 @@ eyeModelRadiusPx = 100;
 eyeModelCenterPx = [100, 100];
 
 cameraTiltAngle  = -25;
-cameraPositionXcm = 10;
+cameraPositionXcm = 50;
 
 % gazeVector = [cosd(30) sind(30) 0];
-% gazeVector = [1 0 0]; % eye looking straight ahead
- gazeVector = [cosd(cameraTiltAngle) 0 sind(cameraTiltAngle)]; % eye looking at the camera
+ gazeVector = [1 0 0]; % eye looking straight ahead
+% gazeVector = [cosd(cameraTiltAngle) 0 sind(cameraTiltAngle)]; % eye looking at the camera
 
 %% Simulation 
 eyeMarks = SimulatedEyePositions_EyeCoordinates(60, 60, 60, 10, gazeVector, eyeModelRadiuscm);
@@ -31,7 +31,10 @@ calibrationCameraX = cameraPositionXcm;
     CalculateEyeRotationQuaternion( camEyeImagePoints,eyeDataH, eyeDataV, eyeDataT,...
     eyeCalibrationModelCenter, eyeCalibrationModelRad, calibrationCameraAngle, 0, calibrationCameraX );
 
-T = rad2deg(quat2eul(qCamRefToEyeCoordinates,'XYZ'))
+%T = rad2deg(quat2eul(qCamRefToEyeCoordinates),'XYZ')
+eulerd(qCamRefToEyeCoordinates,'YXZ','frame')
+
+%T = eulerd(qCamRefToEyeCoordinates,'XYZ','frame')
 
 %%
 % figure

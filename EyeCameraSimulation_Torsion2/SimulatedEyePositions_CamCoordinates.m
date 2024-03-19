@@ -19,7 +19,9 @@ norm_xcamcor = -camPosition./sqrt(sum(camPosition.^2));
 norm_xeyecor = [1,0,0];
 
 % calculate the angle between norm_xcamcor and norm_xeyecor
-angleDeg = acosd( dot(norm_xeyecor,norm_xcamcor) );
+% angleDeg = acosd( dot(norm_xeyecor,norm_xcamcor) );%CHANGE TO ATAN2 
+% angleDeg = asind( sqrt(sum(cross(norm_xeyecor,norm_xcamcor).^2)) );
+angleDeg = atan2d(sqrt(sum(cross(norm_xeyecor,norm_xcamcor).^2)),dot(norm_xeyecor,norm_xcamcor));
 
 % axis of rotation
 rotAxis = cross(norm_xeyecor,norm_xcamcor);
@@ -84,7 +86,7 @@ end
 
 function plotRotatedCoordinates_Demo(angleDeg, rotAxis, camPosition, eyeMarks)
 eyeCoor = [1,0,0;0,1,0;0,0,1];
-
+camPosition = [0,0,0];
 camCoor(1,:) = camPosition + RotatePointsAlongAxis(eyeCoor(1,:), angleDeg, rotAxis);
 camCoor(2,:) = camPosition + RotatePointsAlongAxis(eyeCoor(2,:), angleDeg, rotAxis);
 camCoor(3,:) = camPosition + RotatePointsAlongAxis(eyeCoor(3,:), angleDeg, rotAxis);

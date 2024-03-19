@@ -35,7 +35,7 @@ qt = quaternion(q1,q2,q3,q4);
 
 % full rotation is q and qt in sequence, still in camera reference frame
 qEyePosInCamera2Ref = qt*q;
-qEyePosInRef2Camera = quatinv(qEyePosInCamera2Ref);
+qEyePosInRef2Camera = conj(qEyePosInCamera2Ref);
 % Last step is to calculate the full quaternion from camera reference position to
 % global coordinates where the center of the coordinates is at center of
 % eye globe
@@ -54,7 +54,10 @@ norm_xcamcor = -camPosition./sqrt(sum(camPosition.^2));
 norm_xeyecor = [1,0,0];
 
 % calculate the angle between norm_xcamcor and norm_xeyecor
-angleDeg = acosd( dot(norm_xeyecor,norm_xcamcor) );
+% angleDeg = acosd( dot(norm_xeyecor,norm_xcamcor) );
+% angleDeg = asind( sqrt(sum(cross(norm_xeyecor,norm_xcamcor).^2)) );
+angleDeg = atan2d(sqrt(sum(cross(norm_xeyecor,norm_xcamcor).^2)),dot(norm_xeyecor,norm_xcamcor));
+
 
 % axis of rotation
 rotAxis = cross(norm_xeyecor,norm_xcamcor);
@@ -69,7 +72,7 @@ q3 = w(2) * sin(alpha/2);
 q4 = w(3) * sin(alpha/2);
 
 qEye2Camera = quaternion(q1,q2,q3,q4);
-qCamera2Eye = quatinv(qEye2Camera);
+qCamera2Eye = conj(qEye2Camera);
 %% Combining all three
 qCamRefToEyeCoordinates = qCamera2Eye*qEyePosInRef2Camera;
 end
