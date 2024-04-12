@@ -9,13 +9,13 @@ cameraTiltAngle  = -25;
 cameraPositionXcm = 50;
 
 % gazeVector = [cosd(30) sind(30) 0];
- gazeVector = [1 0 0]; % eye looking straight ahead
-% gazeVector = [cosd(cameraTiltAngle) 0 sind(cameraTiltAngle)]; % eye looking at the camera
+% gazeVector = [1 0 0]; % eye looking straight ahead
+ gazeVector = [cosd(cameraTiltAngle) 0 sind(cameraTiltAngle)]; % eye looking at the camera
 
 %% Simulation 
-eyeMarks = SimulatedEyePositions_EyeCoordinates(60, 60, 60, 10, gazeVector, eyeModelRadiuscm);
+eyeMarks = SimulatedEyePositions_EyeCoordinates(60, 60, 60, 0, gazeVector, eyeModelRadiuscm);
 camEyeImagePoints = SimulatedEyePositions_CamCoordinates(eyeMarks, cameraPositionXcm, cameraTiltAngle, 0,eyeModelRadiusPx/eyeModelRadiuscm, eyeModelCenterPx);
-[torsion,testRotatedcamEye] = SimulateOpenIrisTorsionCalculation(camEyeImagePoints, eyeModelCenterPx, eyeModelRadiusPx);
+[torsion,~] = SimulateOpenIrisTorsionCalculation(camEyeImagePoints, eyeModelCenterPx, eyeModelRadiusPx);
 
 % OpenIris Data
 eyeDataH = camEyeImagePoints(1,1); % pupil center X
@@ -28,11 +28,12 @@ calibrationCameraX = cameraPositionXcm;
 
 %% Extracting Eye Movement Form OpenIris Measurements
 [qCamRefToEyeCoordinates, qEyePosInRef2Camera, qCamera2Eye] = ...
-    CalculateEyeRotationQuaternion( camEyeImagePoints,eyeDataH, eyeDataV, eyeDataT,...
+    CalculateEyeRotationQuaternion(eyeDataH, eyeDataV, eyeDataT,...
     eyeCalibrationModelCenter, eyeCalibrationModelRad, calibrationCameraAngle, 0, calibrationCameraX );
 
 %T = rad2deg(quat2eul(qCamRefToEyeCoordinates),'XYZ')
-eulerd(qCamRefToEyeCoordinates,'YXZ','frame')
+%eulerd(qCamRefToEyeCoordinates,'YXZ','frame')
+eulerd(qCamRefToEyeCoordinates,'XYZ','frame')
 
 %T = eulerd(qCamRefToEyeCoordinates,'XYZ','frame')
 

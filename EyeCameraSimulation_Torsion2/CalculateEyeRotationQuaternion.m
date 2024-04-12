@@ -1,4 +1,4 @@
-function [qCamRefToEyeCoordinates, qEyePosInRef2Camera, qCamera2Eye] = CalculateEyeRotationQuaternion(camEyeImagePoints, eyeDataH, eyeDataV, eyeDataT, eyeCalibrationModelCenter, eyeCalibrationModelRad, camAlpha, camBeta, cam_x )
+function [qCamRefToEyeCoordinates, qEyePosInRef2Camera, qCamera2Eye] = CalculateEyeRotationQuaternion(eyeDataH, eyeDataV, eyeDataT, eyeCalibrationModelCenter, eyeCalibrationModelRad, camAlpha, camBeta, cam_x )
 % combining three quaternions:
 % 1- reference position to measure torsion
 % 2- referecen position with torsion to gaze direction in camera image

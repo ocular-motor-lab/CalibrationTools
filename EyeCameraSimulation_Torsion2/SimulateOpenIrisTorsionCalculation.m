@@ -40,14 +40,16 @@ camEyeImagePointsRotated = rotatepoint(q,camEyeImagePoints3D);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %Calculate torsion with 4 points % LEFT RIGHT UP DOWN
+%%%%%%%%% TODO %%%%%%%%%%%
+% this does not give the correct response in all cases 
 t1 = 90-atan2d(camEyeImagePointsRotated(2,3),camEyeImagePointsRotated(2,2));
 t2 = -atan2d(camEyeImagePointsRotated(3,3),camEyeImagePointsRotated(3,2))-90;
 t3 = -atan2d(camEyeImagePointsRotated(4,3),camEyeImagePointsRotated(4,2));
 t4 = 180-atan2d(camEyeImagePointsRotated(5,3),camEyeImagePointsRotated(5,2));
-if t4 > 359, t4 = 360 - t4;end
-if t3 > 359, t3 = 360 - t3;end
-if t2 > 359, t2 = 360 - t2;end
-if t1 > 359, t1 = 360 - t1;end
+if t4 - t1 > 359 || t4 - t2 > 359 || t4 - t3 > 359, t4 = 360 - t4;end
+if t3 - t1 > 359 || t3 - t2 > 359 || t3 - t4 > 359, t3 = 360 - t3;end
+if t2 - t1 > 359 || t2 - t3 > 359 || t2 - t4 > 359, t2 = 360 - t2;end
+if t1 - t4 > 359 || t1 - t2 > 359 || t1 - t3 > 359, t1 = 360 - t1;end
 
 torsion = mean([t1,t2,t3,t4]);
 
