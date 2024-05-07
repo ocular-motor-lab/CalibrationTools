@@ -1,0 +1,30 @@
+Time=2024-04-12-10:41:52.791 FrameNumber=303126  Message=233900.6241 TRIAL_START [trial=1, condition=1] Data=
+Time=2024-04-12-10:41:52.797 FrameNumber=303129  Message=233900.6473 TRIAL_START_LOOP 1 1 1 Data=
+Time=2024-04-12-10:41:55.825 FrameNumber=304639  Message=233903.6764 TRIAL_STOP [trial=1, condition=1] Data=
+Time=2024-04-12-10:41:55.884 FrameNumber=304668  Message=233903.7332 TRIAL_START [trial=2, condition=4] Data=
+Time=2024-04-12-10:41:55.889 FrameNumber=304671  Message=233903.7404 TRIAL_START_LOOP 2 4 4 Data=
+Time=2024-04-12-10:41:58.908 FrameNumber=306176  Message=233906.7594 TRIAL_STOP [trial=2, condition=4] Data=
+Time=2024-04-12-10:41:58.950 FrameNumber=306196  Message=233906.8011 TRIAL_START [trial=3, condition=2] Data=
+Time=2024-04-12-10:41:58.958 FrameNumber=306201  Message=233906.8065 TRIAL_START_LOOP 3 2 2 Data=
+Time=2024-04-12-10:42:01.974 FrameNumber=307704  Message=233909.826 TRIAL_STOP [trial=3, condition=2] Data=
+Time=2024-04-12-10:42:02.014 FrameNumber=307724  Message=233909.8661 TRIAL_START [trial=4, condition=7] Data=
+Time=2024-04-12-10:42:02.022 FrameNumber=307728  Message=233909.8706 TRIAL_START_LOOP 4 7 7 Data=
+Time=2024-04-12-10:42:05.041 FrameNumber=309233  Message=233912.893 TRIAL_STOP [trial=4, condition=7] Data=
+Time=2024-04-12-10:42:05.082 FrameNumber=309254  Message=233912.9326 TRIAL_START [trial=5, condition=5] Data=
+Time=2024-04-12-10:42:05.086 FrameNumber=309256  Message=233912.9382 TRIAL_START_LOOP 5 5 5 Data=
+Time=2024-04-12-10:42:08.110 FrameNumber=310763  Message=233915.9602 TRIAL_STOP [trial=5, condition=5] Data=
+Time=2024-04-12-10:42:08.175 FrameNumber=310795  Message=233916.0231 TRIAL_START [trial=6, condition=6] Data=
+Time=2024-04-12-10:42:08.181 FrameNumber=310798  Message=233916.0311 TRIAL_START_LOOP 6 6 6 Data=
+Time=2024-04-12-10:42:11.208 FrameNumber=312308  Message=233919.0596 TRIAL_STOP [trial=6, condition=6] Data=
+Time=2024-04-12-10:42:11.249 FrameNumber=312328  Message=233919.0968 TRIAL_START [trial=7, condition=8] Data=
+Time=2024-04-12-10:42:11.253 FrameNumber=312330  Message=233919.1043 TRIAL_START_LOOP 7 8 8 Data=
+Time=2024-04-12-10:42:14.275 FrameNumber=313837  Message=233922.1263 TRIAL_STOP [trial=7, condition=8] Data=
+Time=2024-04-12-10:42:14.309 FrameNumber=313854  Message=233922.1603 TRIAL_START [trial=8, condition=9] Data=
+Time=2024-04-12-10:42:14.314 FrameNumber=313856  Message=233922.165 TRIAL_START_LOOP 8 9 9 Data=
+Time=2024-04-12-10:42:17.341 FrameNumber=315366  Message=233925.193 TRIAL_STOP [trial=8, condition=9] Data=
+Time=2024-04-12-10:42:17.377 FrameNumber=315383  Message=233925.2265 TRIAL_START [trial=9, condition=3] Data=
+Time=2024-04-12-10:42:17.381 FrameNumber=315385  Message=233925.2326 TRIAL_START_LOOP 9 3 3 Data=
+Time=2024-04-12-10:42:20.410 FrameNumber=316895  Message=233928.2601 TRIAL_STOP [trial=9, condition=3] Data=
+Time=2024-04-12-10:42:20.466 FrameNumber=316923  Message=233928.3151 TRIAL_START [trial=10, condition=1] Data=
+Time=2024-04-12-10:42:20.473 FrameNumber=316927  Message=233928.323 TRIAL_START_LOOP 10 1 1 Data=
+Time=2024-04-12-10:42:23.493 FrameNumber=318433  Message=233931.3437 TRIAL_STOP [trial=10, condition=1] Data=
