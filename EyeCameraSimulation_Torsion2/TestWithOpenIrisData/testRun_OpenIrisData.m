@@ -41,9 +41,29 @@ dataTable = table(EyeDataFileName',TrialDataFile',OriginalRawDataFileName','Vari
 eyeModel = EstimateEyeModel(dataTable,targets,d,eyeLeftCameraPosition,eyeRightCameraPosition);
 
 %% compare the left and right camera data
-for i = 1:size(dataTable,1)
-    
+for session = 1:size(dataTable,1)
+    openirisData = readtable(dataTable.EyeDataFileName{session});
+
+    %LeftEye
+    H = openirisData.LeftPupilX;
+    V = openirisData.LeftPupilY;
+    T = openirisData.LeftTorsion;
+    measuredEyePositions = table(H,V,T,'VariableNames',{'H','V','T'});
+    rotatedCamRefGaze{session}.Left = EstimateGazeDirection(measuredEyePositions,...
+        eyeModel.LeftCenter{session}, eyeModel.LeftRad(session), eyeLeftCameraPosition );
+
+    %RightEye
+    H = openirisData.RightPupilX;
+    V = openirisData.RightPupilY;
+    T = openirisData.RightTorsion;
+    measuredEyePositions = table(H,V,T,'VariableNames',{'H','V','T'});
+
+    rotatedCamRefGaze{session}.Right = EstimateGazeDirection(measuredEyePositions,...
+        eyeModel.RightCenter{session}, eyeModel.RightRad(session), eyeRightCameraPosition );
+
 end
+
+
 
 
 
