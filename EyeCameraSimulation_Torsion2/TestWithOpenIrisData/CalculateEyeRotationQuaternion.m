@@ -61,9 +61,12 @@ norm_xeyecor = [1,0,0];
 % angleDeg = asind( sqrt(sum(cross(norm_xeyecor,norm_xcamcor).^2)) );
 angleDeg = atan2d(sqrt(sum(cross(norm_xeyecor,norm_xcamcor).^2)),dot(norm_xeyecor,norm_xcamcor));
 
-
 % axis of rotation
-rotAxis = cross(norm_xeyecor,norm_xcamcor);
+if angleDeg == 180
+    rotAxis = [0 1 0];
+else
+    rotAxis = cross(norm_xeyecor,norm_xcamcor);
+end
 
 w = rotAxis./sqrt(sum(rotAxis.^2));
 alpha = deg2rad(angleDeg);
