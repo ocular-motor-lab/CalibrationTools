@@ -49,6 +49,7 @@ for session = 1:size(dataTable,1)
     V = openirisData.LeftPupilY;
     T = openirisData.LeftTorsion;
     measuredEyePositions = table(H,V,T,'VariableNames',{'H','V','T'});
+    measuredEyeData{session}.Left = measuredEyePositions;
     rotatedCamRefGaze{session}.Left = EstimateGazeDirection(measuredEyePositions,...
         eyeModel.LeftCenter{session}, eyeModel.LeftRad(session), eyeLeftCameraPosition );
 
@@ -57,7 +58,7 @@ for session = 1:size(dataTable,1)
     V = openirisData.RightPupilY;
     T = openirisData.RightTorsion;
     measuredEyePositions = table(H,V,T,'VariableNames',{'H','V','T'});
-
+    measuredEyeData{session}.Right = measuredEyePositions;
     rotatedCamRefGaze{session}.Right = EstimateGazeDirection(measuredEyePositions,...
         eyeModel.RightCenter{session}, eyeModel.RightRad(session), eyeRightCameraPosition );
 
