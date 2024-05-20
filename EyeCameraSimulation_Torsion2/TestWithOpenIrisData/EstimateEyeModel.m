@@ -12,7 +12,7 @@ for session = 1:size(dataTable,1)
     T = eventTable.LeftTorsion_mean;
     measuredEyePositions = table(H,V,T,'VariableNames',{'H','V','T'});
 
-    % remove condition 8
+    % remove condition 8 - because the target wasn't visible
     measuredEyePositions = measuredEyePositions(eventTable.ConditionNumber~=8,:);
     trueGazeDirection = trueGazeDirection(eventTable.ConditionNumber~=8,:);
     eventTable = eventTable(eventTable.ConditionNumber~=8,:);
