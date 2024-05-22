@@ -14,7 +14,7 @@ h = 15; v = 10; %degree
 d = 85; %cm
 targets = {[0,0],[h,0],[-h,0],[0,v],[0,-v],[h,v],[h,-v],[-h,v],[-h,-v]};%[-h,v] wasn't visible, condition 8
 eyeLeftCameraPosition = [42,0,0];
-eyeRightCameraPosition = [42,0,-18];
+eyeRightCameraPosition = [42,0,-20];
 
 i=1;
 EyeDataFileName{i} = 'Calibration__subj2__cal-2024Apr12-104555-PostProc-2024Apr12-144455\Calibration__subj2__cal-2024Apr12-104555-PostProc-2024Apr12-144455.txt';
@@ -64,45 +64,49 @@ for session = 1:size(dataTable,1)
 
 end
 
+%%
+figure,
+plot3(rotatedCamRefGaze{session}.Left(:,1),rotatedCamRefGaze{session}.Left(:,2),rotatedCamRefGaze{session}.Left(:,3),'o')
+hold on
+plot3(rotatedCamRefGaze{session}.Right(:,1),rotatedCamRefGaze{session}.Right(:,2),rotatedCamRefGaze{session}.Right(:,3),'o')
 
+legend({'Left','Right'})
+daspect([1,1,1])
+view(70,25)
 
+figure,
+subplot(1,2,1)
+% plot(rotatedCamRefGaze{session}.Left(:,1))
+% hold on 
+plot(rotatedCamRefGaze{session}.Left(:,2))
+hold on 
+plot(rotatedCamRefGaze{session}.Right(:,2))
+title('Horizontal')
+ylim([-0.8,0.6])
 
+subplot(1,2,2)
+% plot(rotatedCamRefGaze{session}.Right(:,1))
+% hold on 
+plot(rotatedCamRefGaze{session}.Left(:,3))
+hold on 
+plot(rotatedCamRefGaze{session}.Right(:,3))
+title('Vertical')
+legend({'Left','Right'})
+ylim([-0.8,0.6])
 
-
-
-
-
-% for i = 1:size(dataTable,1)
+% figure,
+% subplot(1,2,1)
+% % plot(rotatedCamRefGaze{session}.Left(:,1))
+% % hold on 
+% plot(rotatedCamRefGaze{session}.Left(:,2))
+% hold on 
+% plot(rotatedCamRefGaze{session}.Left(:,3))
+% title('LeftEye')
 % 
-%     % read data
-%     openirisData = readtable(dataTable.EyeDataFileName{i});
-% 
-%     eyeDataH = openirisData.RightPupilX;
-%     eyeDataV = openirisData.RightPupilY;
-%     eyeDataT = openirisData.RightTorsion;
-% 
-%     eyeCalibrationModelCenter = eyeModel.RightCenter{i};
-%     eyeCalibrationModelRad = eyeModel.RightRad(i);
-% 
-%     camposition = eyeRightCameraPosition;
-%     calibrationCameraAngle = atand(camposition(3)/camposition(1));
-%     calibrationCameraX = camposition(1);
-% 
-%     eyeDataH_measured = openirisData.LeftPupilX;
-%     eyeDataV_measured = openirisData.LeftPupilY;
-%     eyeDataT_measured = openirisData.LeftTorsion;
-% 
-%     for j = 1:size(eyeDataH,1)
-%         if eyeDataH(j,:) == 0 && eyeDataV(j,:) == 0, continue, end
-%         qCamRefToEyeCoordinates{i}(j,:) = ...
-%             CalculateEyeRotationQuaternion(eyeDataH(j,:), eyeDataV(j,:), eyeDataT(j,:),...
-%             eyeCalibrationModelCenter, eyeCalibrationModelRad, calibrationCameraAngle, 0, calibrationCameraX );
-% 
-%         rotatedCamRefGaze{i}(j,:) = rotatepoint(qCamRefToEyeCoordinates{i}(j),[1,0,0]);
-% 
-%         error_{i}(j,:) =  sqrt((rotatedCamRefGaze{i}(j,2) + eyeCalibrationModelCenter(1) - eyeDataH_measured(j,:) ).^2 ...
-%             + (rotatedCamRefGaze{i}(j,3) + eyeCalibrationModelCenter(2) - eyeDataV_measured(j,:) ).^2 );
-% 
-%     end
-% end
-
+% subplot(1,2,2)
+% % plot(rotatedCamRefGaze{session}.Right(:,1))
+% % hold on 
+% plot(rotatedCamRefGaze{session}.Right(:,2))
+% hold on 
+% plot(rotatedCamRefGaze{session}.Right(:,3))
+% title('RightEye')

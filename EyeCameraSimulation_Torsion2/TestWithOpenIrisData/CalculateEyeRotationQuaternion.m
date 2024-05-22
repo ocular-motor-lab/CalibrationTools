@@ -69,7 +69,7 @@ norm_xeyecor = [1,0,0];
 angleDeg = atan2d( sqrt(sum(cross(norm_xcamcor,norm_xeyecor).^2)),dot(norm_xcamcor,norm_xeyecor) );
 
 % axis of rotation
-if angleDeg == 180
+if angleDeg == 180 || angleDeg == 0 
     rotAxis = [0 1 0];
 else
     rotAxis = cross(norm_xcamcor,norm_xeyecor);
