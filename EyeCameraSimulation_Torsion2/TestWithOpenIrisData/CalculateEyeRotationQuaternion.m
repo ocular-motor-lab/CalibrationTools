@@ -76,7 +76,9 @@ else
 end
 
 w = rotAxis./sqrt(sum(rotAxis.^2));
-alpha = deg2rad(angleDeg);
+% this is negative to have the gaze direction in the eye looking at the
+% center of the display.
+alpha = - deg2rad(angleDeg);
 
 %the quaternion
 q1 = cos(alpha/2);
@@ -107,10 +109,6 @@ cameraCor.x = [zeros(size(sin_))',sin_',cos_'];
 cameraCor.y = [sin_',zeros(size(sin_))',cos_'];
 cameraCor.z = [sin_',cos_',zeros(size(sin_))'];
 
-eyeCor.x = rotatepoint(qCamera2Eye,cameraCor.x);
-eyeCor.y = rotatepoint(qCamera2Eye,cameraCor.y);
-eyeCor.z = rotatepoint(qCamera2Eye,cameraCor.z);
-
 figure,
 % plotting camera cordinates
 plot3(cameraCor.x(:,1),cameraCor.x(:,2),cameraCor.x(:,3),'--k')
@@ -118,15 +116,6 @@ hold on
 plot3(cameraCor.y(:,1),cameraCor.y(:,2),cameraCor.y(:,3),'--k')
 hold on
 plot3(cameraCor.z(:,1),cameraCor.z(:,2),cameraCor.z(:,3),'--k')
-
-% plotting eye cordinates
-hold on
-plot3(eyeCor.x(:,1),eyeCor.x(:,2),eyeCor.x(:,3),':b')
-hold on
-plot3(eyeCor.y(:,1),eyeCor.y(:,2),eyeCor.y(:,3),':b')
-hold on
-plot3(eyeCor.z(:,1),eyeCor.z(:,2),eyeCor.z(:,3),':b')
-
 
 % plotting the camera reference position (eye looking at the camera)
 eyeLookingAtCamera = EyeLookingAtCamera(eyeCalibrationModelRad,[1,0,0]);
@@ -154,7 +143,7 @@ eyeDirection2 = rotatepoint(qCamRefToEyeCoordinates,eyeLookingAtCamera);
 hold on
 plot3(eyeDirection2(:,1),eyeDirection2(:,2),eyeDirection2(:,3),'go')
 
-legend({'CameraCordinates','','','EyeCordinates','','','Cam Ref - Eye looking at the camera','Rotation by t','Rotation by h,v and t','Eye rotation in eye cordinates','using one quaternion' })
+legend({'Cordinates','','','','','Cam Ref - Eye looking at the camera','Rotation by t','Rotation by h,v and t','Eye rotation in eye cordinates','using one quaternion' })
 xlim([-300,300])
 ylim([-300,300])
 zlim([-300,300])

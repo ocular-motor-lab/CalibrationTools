@@ -24,7 +24,7 @@ for session = 1:size(dataTable,1)
     costf = @(param) CostF_toEstimateEyeModel(measuredEyePositions,trueGazeDirection,...
         [param(1),param(2)], param(3), eyeLeftCameraPosition);
     %estParam{session}.LeftEye = fmincon( costf,[250,250,300],[],[],[],[],[minEyeModelCenter(1),minEyeModelCenter(2),minEyeModelRad],[1000,1000,1000]);
-    estParam{session}.LeftEye = fmincon( costf,[minEyeModelCenter(1),minEyeModelCenter(2),250],[],[],[],[],[10,10,100],[1000,1000,1000]);
+    estParam{session}.LeftEye = fmincon( costf,[minEyeModelCenter(1),minEyeModelCenter(2),300],[],[],[],[],[10,10,10],[1000,1000,1000]);
 
     LeftEyeCalibrationModelCenter{session} = [estParam{session}.LeftEye(1),estParam{session}.LeftEye(2)];
     LeftEyeCalibrationModelRad(session) = estParam{session}.LeftEye(3);
@@ -43,7 +43,7 @@ for session = 1:size(dataTable,1)
     costf = @(param) CostF_toEstimateEyeModel(measuredEyePositions,trueGazeDirection,...
         [param(1),param(2)], param(3), eyeRightCameraPosition);
     %estParam{session}.RightEye = fmincon( costf,[250,250,300],[],[],[],[],[minEyeModelCenter(1),minEyeModelCenter(2),minEyeModelRad],[1000,1000,1000]);
-    estParam{session}.RightEye = fmincon( costf,[minEyeModelCenter(1),minEyeModelCenter(2),250],[],[],[],[],[10,10,100],[1000,1000,1000]);
+    estParam{session}.RightEye = fmincon( costf,[minEyeModelCenter(1),minEyeModelCenter(2),300],[],[],[],[],[10,10,10],[1000,1000,1000]);
 
     RightEyeCalibrationModelCenter{session} = [estParam{session}.RightEye(1),estParam{session}.RightEye(2)];
     RightEyeCalibrationModelRad(session) = estParam{session}.RightEye(3);
