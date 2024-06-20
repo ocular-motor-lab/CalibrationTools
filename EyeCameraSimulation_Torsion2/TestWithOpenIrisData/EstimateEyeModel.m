@@ -24,7 +24,7 @@ for session = 1:size(dataTable,1)
     costf = @(param) CostF_toEstimateEyeModel(measuredEyePositions,trueGazeDirection,...
         [param(1),param(2)], param(3), eyeLeftCameraPosition);
     %estParam{session}.LeftEye = fmincon( costf,[250,250,300],[],[],[],[],[minEyeModelCenter(1),minEyeModelCenter(2),minEyeModelRad],[1000,1000,1000]);
-    estParam{session}.LeftEye = fmincon( costf,[minEyeModelCenter(1),minEyeModelCenter(2),300],[],[],[],[],[10,10,10],[1000,1000,1000]);
+    estParam{session}.LeftEye = fmincon( costf,[minEyeModelCenter(1),minEyeModelCenter(2),250],[],[],[],[],[10,10,10],[1000,1000,1000]);
 
     LeftEyeCalibrationModelCenter{session} = [estParam{session}.LeftEye(1),estParam{session}.LeftEye(2)];
     LeftEyeCalibrationModelRad(session) = estParam{session}.LeftEye(3);
@@ -43,7 +43,7 @@ for session = 1:size(dataTable,1)
     costf = @(param) CostF_toEstimateEyeModel(measuredEyePositions,trueGazeDirection,...
         [param(1),param(2)], param(3), eyeRightCameraPosition);
     %estParam{session}.RightEye = fmincon( costf,[250,250,300],[],[],[],[],[minEyeModelCenter(1),minEyeModelCenter(2),minEyeModelRad],[1000,1000,1000]);
-    estParam{session}.RightEye = fmincon( costf,[minEyeModelCenter(1),minEyeModelCenter(2),300],[],[],[],[],[10,10,10],[1000,1000,1000]);
+    estParam{session}.RightEye = fmincon( costf,[minEyeModelCenter(1),minEyeModelCenter(2),250],[],[],[],[],[10,10,10],[1000,1000,1000]);
 
     RightEyeCalibrationModelCenter{session} = [estParam{session}.RightEye(1),estParam{session}.RightEye(2)];
     RightEyeCalibrationModelRad(session) = estParam{session}.RightEye(3);
@@ -93,7 +93,7 @@ end
 
 function eventTable = EyePositionCalDots(eyeDataFileName,eventTable)
 %update the event data table, with eye positions in pixels for each
-%position
+%position ( pupil - CR )
 eyeData = readtable(eyeDataFileName);
 for i = 1:2:size(eventTable,1)
     indx = eventTable.FrameIndex(i):eventTable.FrameIndex(i+1);
@@ -109,17 +109,41 @@ for i = 1:2:size(eventTable,1)
     eventTable.LeftTorsion_median(i) = median(eyeData.LeftTorsion(indx));
     eventTable.LeftTorsion_std(i) = std(eyeData.LeftTorsion(indx));
 
-    eventTable.RightPupilX_mean(i) = mean(eyeData.LeftPupilX(indx));
-    eventTable.RightPupilX_median(i) = median(eyeData.LeftPupilX(indx));
-    eventTable.RightPupilX_std(i) = std(eyeData.LeftPupilX(indx));
+    eventTable.RightPupilX_mean(i) = mean(eyeData.RightPupilX(indx));
+    eventTable.RightPupilX_median(i) = median(eyeData.RightPupilX(indx));
+    eventTable.RightPupilX_std(i) = std(eyeData.RightPupilX(indx));
 
-    eventTable.RightPupilY_mean(i) = mean(eyeData.LeftPupilY(indx));
-    eventTable.RightPupilY_median(i) = median(eyeData.LeftPupilY(indx));
-    eventTable.RightPupilY_std(i) = std(eyeData.LeftPupilY(indx));
+    eventTable.RightPupilY_mean(i) = mean(eyeData.RightPupilY(indx));
+    eventTable.RightPupilY_median(i) = median(eyeData.RightPupilY(indx));
+    eventTable.RightPupilY_std(i) = std(eyeData.RightPupilY(indx));
 
     eventTable.RightTorsion_mean(i) = mean(eyeData.RightTorsion(indx));
     eventTable.RightTorsion_median(i) = median(eyeData.RightTorsion(indx));
     eventTable.RightTorsion_std(i) = std(eyeData.RightTorsion(indx));
+%Pupil-CR (i couldn't make it work)
+%     eventTable.LeftPupilX_mean(i) = mean(eyeData.LeftPupilX(indx) - eyeData.LeftCR1X(indx));
+%     eventTable.LeftPupilX_median(i) = median(eyeData.LeftPupilX(indx)-eyeData.LeftCR1X(indx));
+%     eventTable.LeftPupilX_std(i) = std(eyeData.LeftPupilX(indx)-eyeData.LeftCR1X(indx));
+% 
+%     eventTable.LeftPupilY_mean(i) = mean(eyeData.LeftPupilY(indx)-eyeData.LeftCR1Y(indx));
+%     eventTable.LeftPupilY_median(i) = median(eyeData.LeftPupilY(indx)-eyeData.LeftCR1Y(indx));
+%     eventTable.LeftPupilY_std(i) = std(eyeData.LeftPupilY(indx)-eyeData.LeftCR1Y(indx));
+% 
+%     eventTable.LeftTorsion_mean(i) = mean(eyeData.LeftTorsion(indx));
+%     eventTable.LeftTorsion_median(i) = median(eyeData.LeftTorsion(indx));
+%     eventTable.LeftTorsion_std(i) = std(eyeData.LeftTorsion(indx));
+% 
+%     eventTable.RightPupilX_mean(i) = mean(eyeData.RightPupilX(indx)-eyeData.RightCR1X(indx));
+%     eventTable.RightPupilX_median(i) = median(eyeData.RightPupilX(indx)-eyeData.RightCR1X(indx));
+%     eventTable.RightPupilX_std(i) = std(eyeData.RightPupilX(indx)-eyeData.RightCR1X(indx));
+% 
+%     eventTable.RightPupilY_mean(i) = mean(eyeData.RightPupilY(indx)-eyeData.RightCR1Y(indx));
+%     eventTable.RightPupilY_median(i) = median(eyeData.RightPupilY(indx)-eyeData.RightCR1Y(indx));
+%     eventTable.RightPupilY_std(i) = std(eyeData.RightPupilY(indx)-eyeData.RightCR1Y(indx));
+% 
+%     eventTable.RightTorsion_mean(i) = mean(eyeData.RightTorsion(indx));
+%     eventTable.RightTorsion_median(i) = median(eyeData.RightTorsion(indx));
+%     eventTable.RightTorsion_std(i) = std(eyeData.RightTorsion(indx));
 
 end
 
