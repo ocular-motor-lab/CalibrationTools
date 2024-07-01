@@ -138,12 +138,14 @@ eyeDirection = rotatepoint(qCamera2Eye,eyePositionInCameraCor);
 hold on
 plot3(eyeDirection(:,1),eyeDirection(:,2),eyeDirection(:,3),'bo')
 
-% plotting the eye rotation in the eye coordinates using one quaternion
-eyeDirection2 = rotatepoint(qCamRefToEyeCoordinates,eyeLookingAtCamera);
-hold on
-plot3(eyeDirection2(:,1),eyeDirection2(:,2),eyeDirection2(:,3),'go')
+% % plotting the eye rotation in the eye coordinates using one quaternion
+% eyeDirection2 = rotatepoint(qCamRefToEyeCoordinates,eyeLookingAtCamera);
+% hold on
+% plot3(eyeDirection2(:,1),eyeDirection2(:,2),eyeDirection2(:,3),'go')
 
-legend({'Cordinates','','','','','Cam Ref - Eye looking at the camera','Rotation by t','Rotation by h,v and t','Eye rotation in eye cordinates','using one quaternion' })
+%legend({'Cordinates','','','Cam Ref - Eye looking at the camera','Rotation by t','Rotation by h,v and t','Eye rotation in eye cordinates','using one quaternion' })
+legend({'Cordinates','','','Cam Ref - Eye looking at the camera','Rotation by t','Rotation by h,v and t','Eye rotation in eye cordinates' })
+
 xlim([-300,300])
 ylim([-300,300])
 zlim([-300,300])
