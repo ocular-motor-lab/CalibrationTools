@@ -1,8 +1,19 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% This script is to use simulated data (generating the measured data by
+% adding a noise to the true data), and using the openiris data (with no 
+% torsion; recording with two cameras from one eye)
+% The functions used in these two sections are at the end of the scripts.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%%%%%%%%%%%%%%%%%%%%%
+%%%%% SECTION 1 %%%%%
+%%%%%%%%%%%%%%%%%%%%%
+%% Simulation
+clear
 eyeRadius = 300;
 eyeCenterPix = [150,150];
 eyedirections = [1,0,0];
-noiseSD = 50;
+noiseSD = 10;
 camParam.cam_x = 200;
 camParam.camAlpha = -25;
 camParam.camBeta = 0;
@@ -22,9 +33,84 @@ costf = @(param) CostFunctionSimulation(param(1),[param(2),param(3)],camParam,si
 estParam = fmincon( costf,[50,50,50],[],[],[],[],[10,10,10],[1000,1000,1000]);
 
 % plot the results
+plotResults(estParam(1),[estParam(2),estParam(3)],camParam,simulatedTrueGazeDirections,[measured_h',measured_v'],1);
 
 
+
+
+
+%%%%%%%%%%%%%%%%%%%%%
+%%%%% SECTION 2 %%%%%
+%%%%%%%%%%%%%%%%%%%%%
+%% OpenIris Data with no Torsion
+clear
+% read the data
+DataTable % outputs dataTable, targets, cameraposition, and displayDistance
+
+% selecting one session
+session = 1;
+[measuredEyePositionsPix, trueGazeDirectionUnitVec] = PrepareData(dataTable,session,targets,d);
+
+% Left Camera
+camposition = eyeLeftCameraPosition;
+camParamLeft.camAlpha = atand(camposition(3)/camposition(1));
+camParamLeft.cam_x = camposition(1);
+camParamLeft.camBeta = 0;
+
+% define the cost function
+costf = @(param) CostFunctionSimulation(param(1),[param(2),param(3)],camParamLeft,trueGazeDirectionUnitVec,measuredEyePositionsPix.Left{:,1:2});
+
+% estimate the eyeModel parameters
+estParam.Left = fmincon( costf,[50,50,50],[],[],[],[],[10,10,10],[1000,1000,1000]);
+
+% Right Camera
+camposition = eyeRightCameraPosition;
+camParamRight.camAlpha = atand(camposition(3)/camposition(1));
+camParamRight.cam_x = camposition(1);
+camParamRight.camBeta = 0;
+
+% define the cost function
+costf = @(param) CostFunctionSimulation(param(1),[param(2),param(3)],camParamRight,trueGazeDirectionUnitVec,measuredEyePositionsPix.Right{:,1:2});
+
+% estimate the eyeModel parameters
+estParam.Right = fmincon( costf,[50,50,50],[],[],[],[],[10,10,10],[1000,1000,1000]);
+
+% Plotting
+estimatedLeft = plotResults(estParam.Left(1),[estParam.Left(2),estParam.Left(3)],camParamLeft,trueGazeDirectionUnitVec,measuredEyePositionsPix.Left{:,1:2},1);
+estimatedRight = plotResults(estParam.Right(1),[estParam.Right(2),estParam.Right(3)],camParamRight,trueGazeDirectionUnitVec,measuredEyePositionsPix.Right{:,1:2},1);
+
+%using the estimated eyemodel for the left camera to estimate the eye positions
+%in pix for when the camera is at right camera location
+estimatedLeft_atRightCamPos = plotResults(estParam.Left(1),[estParam.Left(2),estParam.Left(3)],camParamRight,trueGazeDirectionUnitVec,estimatedRight,1);
+legend({'estimatedPix-Left(camPositionRight)','estimatedPix-Right'})
+%
+% figure
+% plot(estimatedLeft(:,1),estimatedLeft(:,2),'o')
+% hold on
+% plot(estimatedRight(:,1),estimatedRight(:,2),'o')
+% legend({'estimatedLeft','estimatedRight'})
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%
+%%%%% Functions %%%%%
+%%%%%%%%%%%%%%%%%%%%%
 %% Functions
+function estimated = plotResults(eyeRadius,eyeCenterPix,camParam,simulatedTrueGazeDirections,measured,ifplot)
+
+for i = 1:size(simulatedTrueGazeDirections,1)
+    [estimated(i,1),estimated(i,2)] = SimulateCameraEyePixels(eyeRadius,eyeCenterPix,camParam,simulatedTrueGazeDirections(i,:));
+end
+if ifplot==1
+    figure,
+    plot(estimated(:,1),estimated(:,2),'o')
+    hold on
+    plot(measured(:,1),measured(:,2),'o')
+    legend({'estimatedPix','measuredPix'})
+end
+end
+
 function err_rmse = CostFunctionSimulation(eyeRadius,eyeCenterPix,camParam,simulatedTrueGazeDirections,measured)
 
 for i = 1:size(simulatedTrueGazeDirections,1)
@@ -120,3 +206,33 @@ v = v*eyeRadius + eyeCenterPix(2);
 
 
 end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%% FUNCTIONS FOR SECTION 2 %%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+function [measuredEyePositionsPix, trueGazeDirectionUnitVec] = PrepareData(dataTable,session,targets,d)
+
+eventTable = CreateEventTable(dataTable.TrialDataFile{session}, dataTable.OriginalRawDataFileName{session},...
+    dataTable.EyeDataFileName{session}, targets, d);
+eventTable = eventTable(eventTable.LeftPupilX_mean~=0,:);
+%LefttEye
+trueGazeDirectionUnitVec = cell2mat(eventTable.TrueGazeDirection);
+
+H = eventTable.LeftPupilX_mean;
+V = eventTable.LeftPupilY_mean;
+T = eventTable.LeftTorsion_mean;
+measuredEyePositionsPix.Left = table(H,V,T,'VariableNames',{'H','V','T'});
+
+H = eventTable.RightPupilX_mean;
+V = eventTable.RightPupilY_mean;
+T = eventTable.RightTorsion_mean;
+measuredEyePositionsPix.Right = table(H,V,T,'VariableNames',{'H','V','T'});
+
+% remove condition 8 - because the target wasn't visible
+measuredEyePositionsPix.Left = measuredEyePositionsPix.Left(eventTable.ConditionNumber~=8,:);
+measuredEyePositionsPix.Right = measuredEyePositionsPix.Right(eventTable.ConditionNumber~=8,:);
+trueGazeDirectionUnitVec = trueGazeDirectionUnitVec(eventTable.ConditionNumber~=8,:);
+
+end
+
+
