@@ -8,7 +8,68 @@
 %%%%%%%%%%%%%%%%%%%%%
 %%%%% SECTION 1 %%%%%
 %%%%%%%%%%%%%%%%%%%%%
-%% Simulation
+%% Simulation 1 - estimate the gaze direction from camera image, 
+% two cameras for same targets
+clear
+eyeRadius = 300;
+eyeCenterPix = [150,150];
+eyedirections = [1,0,0];
+noiseSD = 10;
+camParam.cam_x = 200;
+camParam.camAlpha = -25;
+camParam.camBeta = 0;
+camPosition = [camParam.cam_x, 0, -camParam.cam_x*tand(25)];
+hdeg = 10; vdeg = 10;
+
+% generate the target positions
+simulatedTrueGazeDirections = SimulatedGazeDirections(hdeg,vdeg);
+
+% simulate the measurements 
+[measured_h,measured_v,~,~] = AddingNoise(eyeRadius,eyeCenterPix,camParam,simulatedTrueGazeDirections,noiseSD);
+measured_t = zeros(size(measured_h));
+measuredEyePositions = table(measured_h',measured_v',measured_t','VariableNames',{'H','V','T'});
+
+minEyeModelCenter = mean([measuredEyePositions.H, measuredEyePositions.V]);
+
+costf = @(param) CostF_toEstimateEyeModel(measuredEyePositions,simulatedTrueGazeDirections,...
+    [param(1),param(2)], param(3), camPosition);
+
+estParam = fmincon( costf,[minEyeModelCenter(1),minEyeModelCenter(2),350],[],[],[],[],[10,10,10],[1000,1000,1000]);
+
+estRad = estParam(3);
+estCenter = [estParam(1),estParam(2)];
+
+eyeModel = table(estRad,eyeRadius,estCenter,eyeCenterPix,'VariableNames',{'estRad','trueRad','estCenter','trueCenter'});
+
+%Cam2
+camParam.camAlpha = 0;
+eyeRadius = 250;
+eyeCenterPix = [120,120];
+
+% generate the target positions
+simulatedTrueGazeDirections = SimulatedGazeDirections(hdeg,vdeg);
+
+% simulate the measurements 
+[measured_h,measured_v,~,~] = AddingNoise(eyeRadius,eyeCenterPix,camParam,simulatedTrueGazeDirections,noiseSD);
+measured_t = zeros(size(measured_h));
+measuredEyePositions = table(measured_h',measured_v',measured_t','VariableNames',{'H','V','T'});
+
+minEyeModelCenter = mean([measuredEyePositions.H, measuredEyePositions.V]);
+
+costf = @(param) CostF_toEstimateEyeModel(measuredEyePositions,simulatedTrueGazeDirections,...
+    [param(1),param(2)], param(3), camPosition);
+
+estParam = fmincon( costf,[minEyeModelCenter(1),minEyeModelCenter(2),150],[],[],[],[],[10,10,10],[1000,1000,1000]);
+
+eyeModel.estRad(2) = estParam(3);
+eyeModel.estCenter(2,:) = [estParam(1),estParam(2)];
+eyeModel.trueRad(2) = eyeRadius;
+eyeModel.trueCenter(2,:) = [eyeCenterPix(1),eyeCenterPix(2)];
+
+clearvars -except eyeModel
+
+
+%% Simulation 2 - estimate the camera image from gaze direction
 clear
 eyeRadius = 300;
 eyeCenterPix = [150,150];
@@ -34,9 +95,6 @@ estParam = fmincon( costf,[50,50,50],[],[],[],[],[10,10,10],[1000,1000,1000]);
 
 % plot the results
 plotResults(estParam(1),[estParam(2),estParam(3)],camParam,simulatedTrueGazeDirections,[measured_h',measured_v'],1);
-
-
-
 
 
 %%%%%%%%%%%%%%%%%%%%%
