@@ -28,6 +28,7 @@ for session = 1:size(dataTable,1)
 end
 
 %%
+session =1;
 figure,
 plot3(rotatedCamRefGaze{session}.Left(:,1),rotatedCamRefGaze{session}.Left(:,2),rotatedCamRefGaze{session}.Left(:,3),'o')
 hold on
