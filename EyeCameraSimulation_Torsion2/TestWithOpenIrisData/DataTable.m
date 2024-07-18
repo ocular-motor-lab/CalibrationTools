@@ -12,8 +12,8 @@
 h = 15; v = 10; %degree
 d = 85; %cm
 targets = {[0,0],[h,0],[-h,0],[0,v],[0,-v],[h,v],[h,-v],[-h,v],[-h,-v]};%[-h,v] wasn't visible, condition 8
-eyeLeftCameraPosition = [42,0,0];
-eyeRightCameraPosition = [42,0,-20];
+eyeLeftCameraPosition = [42,0,-20];
+eyeRightCameraPosition = [42,0,0];
 
 i=1;
 EyeDataFileName{i} = 'Calibration__subj2__cal-2024Apr12-104555-PostProc-2024Apr12-144455\Calibration__subj2__cal-2024Apr12-104555-PostProc-2024Apr12-144455.txt';

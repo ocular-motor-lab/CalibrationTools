@@ -175,13 +175,35 @@ estimatedRight = plotResults(estParam.Right(1),[estParam.Right(2),estParam.Right
 % gaze directions
 % using predicted eye model to estimate the gaze directions and compare it
 % with the true gaze directions from target positions
-measuredEyePositionsPixLeft.H = measuredEyePositionsPix.Left{:,1};
-measuredEyePositionsPixLeft.V = measuredEyePositionsPix.Left{:,2};
-measuredEyePositionsPixLeft.T = measuredEyePositionsPix.Left{:,3};
 
-measuredEyePositionsPixRight.H = measuredEyePositionsPix.Right{:,1};
-measuredEyePositionsPixRight.V = measuredEyePositionsPix.Right{:,2};
-measuredEyePositionsPixRight.T = measuredEyePositionsPix.Right{:,3};
+ openirisData = readtable(dataTable.EyeDataFileName{session});
+
+    %LeftEye
+    L.H = openirisData.LeftPupilX;
+    L.V = openirisData.LeftPupilY;
+    L.T = openirisData.LeftTorsion;
+    
+    %RightEye
+    R.H = openirisData.RightPupilX;
+    R.V = openirisData.RightPupilY;
+    R.T = openirisData.RightTorsion;
+
+% measuredEyePositionsPixLeft.H = measuredEyePositionsPix.Left{:,1};
+% measuredEyePositionsPixLeft.V = measuredEyePositionsPix.Left{:,2};
+% measuredEyePositionsPixLeft.T = measuredEyePositionsPix.Left{:,3};
+% 
+% measuredEyePositionsPixRight.H = measuredEyePositionsPix.Right{:,1};
+% measuredEyePositionsPixRight.V = measuredEyePositionsPix.Right{:,2};
+% measuredEyePositionsPixRight.T = measuredEyePositionsPix.Right{:,3};
+
+measuredEyePositionsPixLeft.H = L.H;
+measuredEyePositionsPixLeft.V = L.V;
+measuredEyePositionsPixLeft.T = L.T;
+
+measuredEyePositionsPixRight.H = R.H;
+measuredEyePositionsPixRight.V = R.V;
+measuredEyePositionsPixRight.T = R.T;
+
 
 rotatedCamRefGaze1 = EstimateGazeDirection(struct2table(measuredEyePositionsPixLeft),...
     eyeModel.estCenter(1,:), eyeModel.estRad(1), eyeLeftCameraPosition );
@@ -199,6 +221,84 @@ plot3(rotatedCamRefGaze2(:,1),rotatedCamRefGaze2(:,2),rotatedCamRefGaze2(:,3),'r
 
 legend({'trueGazeDirection - Using target positions','GazeDirection from LeftCam','GazeDirection from RightCam'})
 title('Gaze Directions')
+
+% Testing Torsion
+%Left and Right Cameras
+camposition = eyeLeftCameraPosition;
+calibrationCameraAngleL = atand(camposition(3)/camposition(1));
+calibrationCameraXL = camposition(1);
+
+camposition = eyeRightCameraPosition;
+calibrationCameraAngleR = atand(camposition(3)/camposition(1));
+calibrationCameraXR = camposition(1);
+
+for i = 1:length(measuredEyePositionsPixRight.H)
+qCamRefToEyeCoordinatesL(i,:) = ...
+            CalculateEyeRotationQuaternion(measuredEyePositionsPixLeft.H(i,:),...
+            measuredEyePositionsPixLeft.V(i,:), measuredEyePositionsPixLeft.T(i,:),...
+            eyeModel.estCenter(1,:), eyeModel.estRad(1), calibrationCameraAngleL, 0, calibrationCameraXL );
+
+qCamRefToEyeCoordinatesR(i,:) = ...
+            CalculateEyeRotationQuaternion(measuredEyePositionsPixRight.H(i,:),...
+            measuredEyePositionsPixRight.V(i,:), measuredEyePositionsPixRight.T(i,:),...
+            eyeModel.estCenter(2,:), eyeModel.estRad(2), calibrationCameraAngleR, 0, calibrationCameraXR );
+
+[HVT_LeftCam(i,:),gazeDirectionUnitVec_LeftCam(i,:), rvLeftCam(i,:)] = Quaternion2HVT(qCamRefToEyeCoordinatesL(i,:));
+[HVT_RightCam(i,:),gazeDirectionUnitVec_RightCam(i,:), rvRightCam(i,:)] = Quaternion2HVT(qCamRefToEyeCoordinatesR(i,:));
+
+end
+figure,
+plot(measuredEyePositionsPixLeft.T,'-k'),
+hold on
+plot(measuredEyePositionsPixRight.T,'-r'),
+hold on
+plot(real(HVT_LeftCam(:,3)),'-b'),
+hold on
+plot(real(HVT_RightCam(:,3)),'-m'),
+
+title('Torsion')
+legend({'Measured LeftCam','Measured RightCam','Estimated LeftCam','Estimated RightCam'})
+%%
+figure,
+subplot(3,3,1,'nextplot','add');
+plot(rvLeftCam(:,1))
+plot(rvRightCam(:,1))
+title('rv')
+subplot(3,3,4,'nextplot','add');
+plot(rvLeftCam(:,2))
+plot(rvRightCam(:,2))
+subplot(3,3,7,'nextplot','add');
+plot(rvLeftCam(:,3))
+plot(rvRightCam(:,3))
+
+subplot(3,3,2,'nextplot','add');
+plot(gazeDirectionUnitVec_LeftCam(:,1))
+plot(gazeDirectionUnitVec_RightCam(:,1))
+title('gaze directions')
+subplot(3,3,5,'nextplot','add');
+plot(gazeDirectionUnitVec_LeftCam(:,2))
+plot(gazeDirectionUnitVec_RightCam(:,2))
+subplot(3,3,8,'nextplot','add');
+plot(gazeDirectionUnitVec_LeftCam(:,3))
+plot(gazeDirectionUnitVec_RightCam(:,3))
+
+
+subplot(3,3,3,'nextplot','add');
+plot(rotatedCamRefGaze1(:,1))
+plot(rotatedCamRefGaze2(:,1))
+title('gaze directions calculated within other functions')
+subplot(3,3,6,'nextplot','add');
+plot(rotatedCamRefGaze1(:,2))
+plot(rotatedCamRefGaze2(:,2))
+subplot(3,3,9,'nextplot','add');
+plot(rotatedCamRefGaze1(:,3))
+plot(rotatedCamRefGaze2(:,3))
+
+
+% title('Torsion')
+% legend({'Measured LeftCam','Measured RightCam','Estimated LeftCam','Estimated RightCam'})
+
+
 
 
 %%%%%%%%%%%%%%%%%%%%%
@@ -329,14 +429,14 @@ eventTable = eventTable(eventTable.LeftPupilX_mean~=0,:);
 %LefttEye
 trueGazeDirectionUnitVec = cell2mat(eventTable.TrueGazeDirection);
 
-H = eventTable.LeftPupilX_mean;
-V = eventTable.LeftPupilY_mean;
-T = eventTable.LeftTorsion_mean;
+H = eventTable.LeftPupilX_median;
+V = eventTable.LeftPupilY_median;
+T = eventTable.LeftTorsion_median;
 measuredEyePositionsPix.Left = table(H,V,T,'VariableNames',{'H','V','T'});
 
-H = eventTable.RightPupilX_mean;
-V = eventTable.RightPupilY_mean;
-T = eventTable.RightTorsion_mean;
+H = eventTable.RightPupilX_median;
+V = eventTable.RightPupilY_median;
+T = eventTable.RightTorsion_median;
 measuredEyePositionsPix.Right = table(H,V,T,'VariableNames',{'H','V','T'});
 
 % remove condition 8 - because the target wasn't visible
