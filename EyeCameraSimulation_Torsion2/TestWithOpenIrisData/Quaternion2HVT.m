@@ -2,7 +2,7 @@ function [HVT,gazeDirectionUnitVec,rv] = Quaternion2HVT(qCamRefToEyeCoordinates)
 
 M = quat2rotm(qCamRefToEyeCoordinates);
 rv = rotvec(qCamRefToEyeCoordinates);
-HVT = RotMat2Helm(M);
+HVT = RotMat2Fick(M);
 
 % find the gaze direction
 gazeDirectionUnitVec = rotatepoint(qCamRefToEyeCoordinates,[1,0,0]);
@@ -14,10 +14,15 @@ function HVT = RotMat2Fick(M)
 r31 = M(3,1);
 r21 = M(2,1);
 r32 = M(3,2);
+r11 = M(1,1);
+r33 = M(3,3);
+% HVT(2) = - asin(r31);
+% HVT(1) = asin(r21/cos(HVT(2)));
+% HVT(3) = asin(r32/cos(HVT(2)));
 
-HVT(2) = - asin(r31);
-HVT(1) = asin(r21/cos(HVT(2)));
-HVT(3) = asin(r32/cos(HVT(2)));
+HVT(1) = atan2(r21,r11);
+HVT(2) = asin(-r31);
+HVT(3) = atan2(r32,r33);
 
 HVT = rad2deg(HVT);
 

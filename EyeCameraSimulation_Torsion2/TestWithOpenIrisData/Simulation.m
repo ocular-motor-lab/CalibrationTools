@@ -129,7 +129,7 @@ plotResults(estParam(1),[estParam(2),estParam(3)],camParam,simulatedTrueGazeDire
 %%%%%%%%%%%%%%%%%%%%%
 %%%%% SECTION 2 %%%%%
 %%%%%%%%%%%%%%%%%%%%%
-%% OpenIris Data with no Torsion
+%% OpenIris Data
 clear
 % read the data
 DataTable % outputs dataTable, targets, cameraposition, and displayDistance
@@ -247,6 +247,7 @@ qCamRefToEyeCoordinatesR(i,:) = ...
 [HVT_RightCam(i,:),gazeDirectionUnitVec_RightCam(i,:), rvRightCam(i,:)] = Quaternion2HVT(qCamRefToEyeCoordinatesR(i,:));
 
 end
+%%
 figure,
 plot(measuredEyePositionsPixLeft.T,'-k'),
 hold on
@@ -258,6 +259,32 @@ plot(real(HVT_RightCam(:,3)),'-m'),
 
 title('Torsion')
 legend({'Measured LeftCam','Measured RightCam','Estimated LeftCam','Estimated RightCam'})
+
+figure,
+plot(measuredEyePositionsPixLeft.H,'-k'),
+hold on
+plot(measuredEyePositionsPixRight.H,'-r'),
+hold on
+plot(real(HVT_LeftCam(:,1)),'-b'),
+hold on
+plot(real(HVT_RightCam(:,1)),'-m'),
+title('H')
+legend({'Measured LeftCam','Measured RightCam','Estimated LeftCam','Estimated RightCam'})
+
+figure,
+plot(measuredEyePositionsPixLeft.V,'-k'),
+hold on
+plot(measuredEyePositionsPixRight.V,'-r'),
+hold on
+plot(real(HVT_LeftCam(:,2)),'-b'),
+hold on
+plot(real(HVT_RightCam(:,2)),'-m'),
+title('V')
+legend({'Measured LeftCam','Measured RightCam','Estimated LeftCam','Estimated RightCam'})
+
+
+
+
 %%
 figure,
 subplot(3,3,1,'nextplot','add');
