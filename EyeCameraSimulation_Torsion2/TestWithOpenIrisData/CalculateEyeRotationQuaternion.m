@@ -4,8 +4,10 @@ function qCamRefToEyeCoordinates = CalculateEyeRotationQuaternion(eyeDataH, eyeD
 % 2- referecen position with torsion to gaze direction in camera image
 % 3- from camera coordinates to global eye coordinates
 %inputs:
-% eyeDataH is the horizontal position of the center of pupil from the camera image
-% eyeDataV is the vertical position of the center of pupil from the camera image
+% eyeDataH is the horizontal position of the center of pupil from the
+% camera image (positive means right in the image)
+% eyeDataV is the vertical position of the center of pupil from the camera
+% image (positive means down in the image)
 % torsion is the calculated torsion in the camera image
 
 %% 1 and 2
@@ -20,9 +22,13 @@ if sqrt(z .* z + y .* y) > eyeCalibrationModelRad, qCamRefToEyeCoordinates = qua
 % 1. quaterion for the torsional component, eye rotating around an axis 
 % perpendicular to the camera, [1,0,0].
 torsion = eyeDataT;
-ecc = deg2rad(torsion); 
-q1 = cos(ecc/2);
-q2 = 1* sin(ecc/2);
+% This is the torsion measured in open iris which is the torsion of the
+% iris between a given frame and the reference frame using the same eye
+% model to wrap the iris in both but the pupil can be at a different
+% position in both of them. 
+torsion = deg2rad(torsion); 
+q1 = cos(torsion/2);
+q2 = 1* sin(torsion/2);
 q3 = 0;
 q4 = 0;
 qt = quaternion(q1,q2,q3,q4);
